@@ -3,6 +3,8 @@ package com.example.praksa.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import lombok.*;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,14 +59,7 @@ public class UserApp implements UserDetails {
     )
     private Set<Recipe> favouriteRecipes = new HashSet<>();
 
-    @OneToMany(mappedBy = "userOne", cascade = CascadeType.ALL)
-    private List<Relationship> relationshipsUserOne;
-
-    @OneToMany(mappedBy = "userTwo", cascade = CascadeType.ALL)
-    private List<Relationship> relationshipsUserTwo;
-
-    @OneToMany(mappedBy = "actionUser",  cascade = CascadeType.ALL)
-    private List<Relationship> relationshipsActionUser;
+   
 
     @OneToMany(mappedBy = "fromUser", cascade = CascadeType.ALL)
     private List<Message> fromUserMessagesList;

@@ -5,8 +5,10 @@ import com.example.praksa.DTOs.FriendResponseDTO;
 import com.example.praksa.DTOs.UserDTO;
 import com.example.praksa.Models.Relationship;
 import com.example.praksa.Models.UserApp;
+import com.example.praksa.Models.UserNode;
 import com.example.praksa.Repositories.RelationshipRepository;
 import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.UserNodeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,106 +22,115 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RelationshipService {
     private final UserAppRepository userAppRepository;
+    private final UserNodeRepository userNodeRepository;
     private final RelationshipRepository relationshipRepository;
     private final UserDTOConverter converter;
 
-    public RelationshipService(UserAppRepository userAppRepository, RelationshipRepository relationshipRepository, UserDTOConverter converter) {
+    public RelationshipService(UserAppRepository userAppRepository, UserNodeRepository userNodeRepository, RelationshipRepository relationshipRepository, UserDTOConverter converter) {
         this.userAppRepository = userAppRepository;
+        this.userNodeRepository = userNodeRepository;
         this.relationshipRepository = relationshipRepository;
         this.converter = converter;
     }
 
-    public boolean createFriendRequest (Long userTwoId) throws Exception{
+    public boolean createFriendRequest(String email) throws Exception {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        UserApp friend = userAppRepository.findById(userTwoId).orElseThrow(() -> {
-            log.error("User not found");
-            return new Exception("User not found");
-        });
+        Optional<UserNode> receiverOptional = userNodeRepository.findByEmail(email);
 
-        Relationship relationshipFromDb = relationshipRepository.findRelationshipByUserOneIdAndUserTwoId(userApp.getId(),friend.getId());
-        if (relationshipFromDb == null) {
-            Relationship relationship = new Relationship();
-            relationship.setActionUser(userApp);
-            relationship.setUserOne(userApp);
-            relationship.setUserTwo(friend);
-            relationship.setStatus(0);
-            relationship.setTime(LocalDateTime.now());
 
-            this.relationshipRepository.save(relationship);
-            return true;
-        } else {
-            relationshipFromDb.setActionUser(userApp);
-            relationshipFromDb.setStatus(0);
-            relationshipFromDb.setTime(LocalDateTime.now());
-            this.relationshipRepository.save(relationshipFromDb);
-            return true;
+        // Check if a relationship already exists
+        Optional<Relationship> existingRelationship =
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverOptional.get().getEmail());
+
+        if (existingRelationship.isPresent()) {
+            return false; // Relationship already exists
         }
 
-    }
+        // Also check reverse direction - if target has already sent a request to sender
+        Optional<Relationship> reverseRelationship =
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverOptional.get().getEmail());
 
-    public List<FriendResponseDTO> getAllFriends(){
-
-        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Relationship> relationships = this.relationshipRepository.findRelationshipByUserIdAndStatus(userApp.getId(),1);
-
-        List<FriendResponseDTO> response = relationships.stream().map(relationship -> {
-            if(!(relationship.getUserOne().getId() == userApp.getId())){
-                return converter.userToFriendResponseDTO(relationship.getUserOne());
+        if (reverseRelationship.isPresent()) {
+            // If they sent us a request,and we're sending one back, auto-accept it
+            if (reverseRelationship.get().getStatus() == 0) {
+                acceptFriendRequest(receiverOptional.get().getEmail());
+                return true;
             }
-            return converter.userToFriendResponseDTO(relationship.getUserTwo());
-        }).collect(Collectors.toList());
-
-        return response;
+        }
+        return  true;
     }
 
-    public List<FriendResponseDTO> getAllRequests(){
-
+    public boolean acceptFriendRequest(String receiverEmail) {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Relationship> relationships = this.relationshipRepository.findRelationshipByUserIdAndStatus(userApp.getId(),0);
 
-        List<FriendResponseDTO> response = relationships.stream().map(relationship -> {
-            if(!(relationship.getUserOne().getId() == userApp.getId())){
-                return converter.userToFriendResponseDTO(relationship.getUserOne());
-            }
-            return converter.userToFriendResponseDTO(relationship.getUserTwo());
-        }).collect(Collectors.toList());
+        Optional<Relationship> requestOptional =
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverEmail);
 
-        return response;
-    }
-
-    public boolean removeFriend (Long friendId) throws Exception {
-        return this.changeStatusAndSave(friendId,1,2);
-    }
-
-    public boolean acceptFriend(Long friendToAcceptId) throws Exception {
-        return this.changeStatusAndSave( friendToAcceptId, 0, 1);
-    }
-
-    public boolean cancelFriendshipRequest(Long friendToRejectId) throws Exception {
-        return this.changeStatusAndSave(friendToRejectId, 0, 2);
-    }
-
-    private boolean changeStatusAndSave(Long friendId, int fromStatus, int toStatus) throws Exception {
-        UserApp loggedInUser = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        UserApp friend = userAppRepository.findById(friendId).orElseThrow(() -> {
-            log.error("User not found");
-            return new Exception("User not found");
-        });
-
-        Relationship relationship = this.relationshipRepository
-                .findRelationshipWithFriendWithStatus(
-                        loggedInUser.getId(), friendId, fromStatus);
-
-        if (relationship == null) {
-            throw new Exception("Relationship doesnt exist");
+        if (requestOptional.isEmpty() || requestOptional.get().getStatus() != 0) {
+            return false;
         }
 
-        relationship.setActionUser(loggedInUser);
-        relationship.setStatus(toStatus);
-        relationship.setTime(LocalDateTime.now());
-        this.relationshipRepository.save(relationship);
+        // Delete the pending request
+        relationshipRepository.deleteRelationship(userApp.getEmail(), receiverEmail);
+
+        // Create a bidirectional friendship
+        relationshipRepository.createFriendship(userApp.getEmail(), receiverEmail);
+
         return true;
     }
+
+    public List<FriendResponseDTO> getPendingRequestsReceived() {
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<UserNode> requests = relationshipRepository.findSourceUsersWithStatus(userApp.getEmail(), 0);
+        return requests.stream().map(converter::userToFriendResponseDTO).toList();
+    }
+
+    public List<UserNode> getPendingRequestsSent(String username) {
+        return relationshipRepository.findTargetUsersWithStatus(username, 0);
+    }
+
+    public boolean cancelFriendshipRequest(String receiverEmail) {
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Optional<Relationship> requestOptional =
+                relationshipRepository.findBySenderAndReceiver(receiverEmail, userApp.getEmail());
+
+        if (requestOptional.isEmpty() || requestOptional.get().getStatus() != 0) {
+            return false;
+        }
+
+        // Update the request status
+        relationshipRepository.updateRelationshipStatus(
+                userApp.getEmail(), receiverEmail, 2);
+
+        return true;
+    }
+
+    public boolean blockUser( String blockedEmail) {
+        // Delete any existing relationships in both directions
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication();
+        relationshipRepository.deleteRelationship(userApp.getEmail(), blockedEmail);
+        relationshipRepository.deleteRelationship(blockedEmail, userApp.getEmail());
+
+        // Create a blocking relationship
+        relationshipRepository.updateRelationshipStatus(userApp.getEmail(), blockedEmail, 2);
+
+        return true;
+    }
+
+    public List<FriendResponseDTO> getFriends() {
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<UserNode> friends =  relationshipRepository.findTargetUsersWithStatus(userApp.getEmail(), 1);
+        return friends.stream().map(converter::userToFriendResponseDTO).toList();
+    }
+
+
+
+    public List<UserNode> getBlockedUsers() {
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return relationshipRepository.findTargetUsersWithStatus(userApp.getEmail(), 2);
+    }
 }
+

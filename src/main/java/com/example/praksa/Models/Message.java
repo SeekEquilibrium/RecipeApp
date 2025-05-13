@@ -26,9 +26,9 @@ public class Message {
     @JoinColumn(name = "to_user_id", referencedColumnName = "id")
     private UserApp toUser;
 
-    @ManyToOne(optional = false, targetEntity = Relationship.class)
-    @JoinColumn(name = "relationship_id", referencedColumnName = "id")
-    private Relationship relationship;
+    //@ManyToOne(optional = false, targetEntity = Relationship.class)
+    //@JoinColumn(name = "relationship_id", referencedColumnName = "id")
+   // private Relationship relationship;
 
     private String subject;
     private String content;

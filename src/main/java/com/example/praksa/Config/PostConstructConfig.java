@@ -1,11 +1,9 @@
 package com.example.praksa.Config;
 
-import com.example.praksa.Models.Adress;
-import com.example.praksa.Models.Gender;
-import com.example.praksa.Models.Role;
-import com.example.praksa.Models.UserApp;
+import com.example.praksa.Models.*;
 import com.example.praksa.Repositories.RoleRepository;
 import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.UserNodeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,11 +16,13 @@ public class PostConstructConfig {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserAppRepository userAppRepository;
+    private final UserNodeRepository userNodeRepository;
 
-    public PostConstructConfig(RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserAppRepository userAppRepository) {
+    public PostConstructConfig(RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserAppRepository userAppRepository, UserNodeRepository userNodeRepository) {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userAppRepository = userAppRepository;
+        this.userNodeRepository = userNodeRepository;
     }
     @PostConstruct
     public void create(){
@@ -36,9 +36,12 @@ public class PostConstructConfig {
             admin1.setRole(roleAdmin);
             userAppRepository.save(admin1);
 
+
             UserApp user1 = new UserApp(2,"Nikola", "Slavnic","nikola@gmail.com", passwordEncoder.encode("nikola"),123 , Gender.MALE,new Adress("Grobljanska2","Ruma","Srbija"),true);
             user1.setRole(roleUser);
+            UserNode userNode1 = new UserNode(2L,"Nikola", "Slavnic","nikola@gmail.com",passwordEncoder.encode("nikola"),123);
             userAppRepository.save(user1);
+            userNodeRepository.save(userNode1);
         }
 
 

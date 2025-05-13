@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @EnableWebMvc
 @EnableScheduling
-@EnableNeo4jRepositories
 @EnableAsync
 public class PraksaApplication {
 

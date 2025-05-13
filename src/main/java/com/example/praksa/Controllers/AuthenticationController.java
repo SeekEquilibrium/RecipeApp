@@ -1,12 +1,15 @@
 package com.example.praksa.Controllers;
 
 import com.example.praksa.Converters.UserDTOConverter;
+import com.example.praksa.Converters.UserNodeDTOConverter;
 import com.example.praksa.DTOs.JWTAuthDTO;
 import com.example.praksa.DTOs.UserDTO;
 import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;
 import com.example.praksa.Models.UserAppToken;
+import com.example.praksa.Models.UserNode;
 import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.UserNodeRepository;
 import com.example.praksa.Security.TokenHandler;
 import com.example.praksa.Services.RefreshTokenService;
 import com.example.praksa.Services.RoleService;
@@ -36,8 +39,10 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final TokenHandler tokenHandler;
     private final RefreshTokenService refreshTokenService;
+    private final UserNodeRepository userNodeRepository;
+    private final UserNodeDTOConverter userNodeDTOConverter;
 
-    public AuthenticationController(UserAppService userAppService , UserDTOConverter userDTOConverter, UserAppRepository userAppRepository, RoleService roleService, AuthenticationManager authenticationManager, TokenHandler tokenHandler, RefreshTokenService refreshTokenService) {
+    public AuthenticationController(UserAppService userAppService , UserDTOConverter userDTOConverter, UserAppRepository userAppRepository, RoleService roleService, AuthenticationManager authenticationManager, TokenHandler tokenHandler, RefreshTokenService refreshTokenService, UserNodeRepository userNodeRepository, UserNodeDTOConverter userNodeDTOConverter) {
         this.userAppService = userAppService;
         this.userDTOConverter = userDTOConverter;
         this.userAppRepository = userAppRepository;
@@ -45,17 +50,30 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
         this.tokenHandler = tokenHandler;
         this.refreshTokenService = refreshTokenService;
+        this.userNodeRepository = userNodeRepository;
+        this.userNodeDTOConverter = userNodeDTOConverter;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserApp> registerUser (@RequestBody UserDTO request){
+    public ResponseEntity<UserAppToken> registerUser (@RequestBody UserDTO request){
         if(userAppService.findByEmail(request.getEmail()) == null){
+
             UserApp user = userDTOConverter.DTOToUser(request);
             user.setRegistered(true);
             user.setRole(roleService.findByName("ROLE_USER"));
             userAppRepository.save(user);
 
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
+            UserNode userNode = userNodeDTOConverter.DTOToUserNode(request);
+            userNodeRepository.save(userNode);
+
+            String jwt = this.tokenHandler.generateToken(user.getUsername(),user.getRole());
+            ResponseCookie jwtCookie = tokenHandler.generateJwtCookie(user);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+            ResponseCookie jwtRefreshCookie = tokenHandler.generateRefreshJwtCookie(refreshToken.getToken());
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(new UserAppToken(jwt,user.getEmail()));
         } else {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }

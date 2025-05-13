@@ -1,38 +1,58 @@
 package com.example.praksa.Repositories;
 
 import com.example.praksa.Models.Relationship;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+
+import com.example.praksa.Models.UserNode;
+import org.springframework.data.neo4j.repository.Neo4jRepository;
+import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface RelationshipRepository extends JpaRepository<Relationship,Long> {
+public interface RelationshipRepository extends Neo4jRepository<Relationship,Long> {
 
-    @Query(value = "" +
-            "SELECT r FROM Relationship AS r " +
-            "WHERE ((r.userOne.id = :id1 AND r.userTwo.id = :id2) " +
-            "OR ( r.userTwo.id = :id1 AND r.userOne.id = :id2)) ")
-    Relationship findRelationshipByUserOneIdAndUserTwoId(@Param(value = "id1") Long userOneId,
-                                                         @Param(value = "id2") Long userTwoId);
+    @Query("MATCH (sender:User {email: $senderEmail})-[r:RELATES_TO]->(receiver:User {email: $receiverEmail}) RETURN r")
+    Optional<Relationship> findBySenderAndReceiver(
+            @Param("senderEmail") String senderEmail,
+            @Param("receiverEmail") String receiverEmail);
 
-    @Query(value = "" +
-            "SELECT r FROM Relationship AS r " +
-            "WHERE (r.userOne.id = :id OR r.userTwo.id = :id ) " +
-            "AND r.status = :status")
-    List<Relationship> findRelationshipByUserIdAndStatus(@Param(value = "id") Long userId,
-                                                         @Param(value = "status") int status);
+    @Query("MATCH (u:User {email: $email})-[r:RELATES_TO]->(receiver:User) WHERE r.status = $status RETURN receiver")
+    List<UserNode> findTargetUsersWithStatus(
+            @Param("email") String email,
+            @Param("status") int status);
 
-    @Query(value = "" +
-            "SELECT r FROM Relationship AS r " +
-            "WHERE ((r.userOne.id = :id1 AND r.userTwo.id = :id2) " +
-            "OR ( r.userTwo.id = :id1 AND r.userOne.id = :id2)) " +
-            "AND r.status = :status")
-    Relationship findRelationshipWithFriendWithStatus(@Param(value = "id1") Long userOneId,
-                                                      @Param(value = "id2") Long userTwoId,
-                                                      @Param(value = "status") int status);
+    @Query("MATCH (sender:User)-[r:RELATES_TO]->(u:User {email: $email}) WHERE r.status = $status RETURN sender")
+    List<UserNode> findSourceUsersWithStatus(
+            @Param("email") String email,
+            @Param("status") int status);
+
+    @Query("MATCH (sender:User {email: $senderemail})-[r:RELATES_TO]->(receiver:User {email: $receiveremail}) " +
+            "SET r.status = $status RETURN r")
+    Relationship updateRelationshipStatus(
+            @Param("senderemail") String senderemail,
+            @Param("receiveremail") String receiveremail,
+            @Param("status") int status);
+
+    @Query("MATCH (u1:User {email: $email1}), (u2:User {email: $email2}) " +
+            "CREATE (u1)-[r1:RELATES_TO {status: 1, createdAt: datetime(), }]->(u2) " +
+            "CREATE (u2)-[r2:RELATES_TO {status: 1, createdAt: datetime(), }]->(u1)")
+    void createFriendship(
+            @Param("email1") String email1,
+            @Param("email2") String email2);
+
+    @Query("MATCH (u1:User {email: $email1})-[r:RELATES_TO]->(u2:User {email: $email2}) DELETE r")
+    void deleteRelationship(
+            @Param("email1") String email1,
+            @Param("email2") String email2);
+
+    @Query("MATCH (sender:User {email: $senderemail}), (receiver:User {email: $receiveremail}) " +
+            "CREATE (sender)-[r:RELATES_TO {status: 0, createdAt: datetime()}]->(receiver) RETURN r")
+    Relationship createRelationship(
+            @Param("senderemail") String senderemail,
+            @Param("receiveremail") String receiveremail);
 
 }
 

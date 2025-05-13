@@ -5,6 +5,7 @@ import com.example.praksa.DTOs.UserDTO;
 import com.example.praksa.Models.Adress;
 import com.example.praksa.Models.Gender;
 import com.example.praksa.Models.UserApp;
+import com.example.praksa.Models.UserNode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class UserDTOConverter {
                 .build();
     }
 
+
+
     public UserDTO UserToDTO (UserApp userApp){
         return  UserDTO.builder()
                 .name(userApp.getName())
@@ -43,7 +46,7 @@ public class UserDTOConverter {
                 .build();
     }
 
-    public FriendResponseDTO userToFriendResponseDTO (UserApp userApp){
+    public FriendResponseDTO userToFriendResponseDTO (UserNode userApp){
         return  FriendResponseDTO.builder()
                 .name(userApp.getName())
                 .surname(userApp.getSurname())

@@ -23,8 +23,8 @@ public class RelationshipController {
     @PostMapping(value = "/addFriend")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Send a friend request to user",httpMethod = "POST")
-    public ResponseEntity<?> addFriend(@RequestParam Long userTwoId) throws Exception {
-        boolean result = relationshipService.createFriendRequest(userTwoId);
+    public ResponseEntity<?> addFriend(@RequestParam String email) throws Exception {
+        boolean result = relationshipService.createFriendRequest(email);
         if(result){
             return  ResponseEntity.ok("Friend request successfully sent ");
         }
@@ -35,23 +35,21 @@ public class RelationshipController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Get all of users friends",httpMethod = "GET")
     public List<FriendResponseDTO> getAllFriends() {
-        List<FriendResponseDTO> users = this.relationshipService.getAllFriends();
-        return users;
+        return this.relationshipService.getFriends();
     }
 
     @GetMapping(value = "/getRequests")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Get all of users friend requests",httpMethod = "GET")
     public List<FriendResponseDTO> getAllRequests() {
-        List<FriendResponseDTO> users = this.relationshipService.getAllRequests();
-        return users;
+        return this.relationshipService.getPendingRequestsReceived();
     }
 
     @PostMapping(value = "/acceptFriend")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Accept friend request ",httpMethod = "POST")
-    public ResponseEntity<?> acceptFriendRequest(@RequestParam Long friendId) throws Exception{
-        boolean result = relationshipService.acceptFriend(friendId);
+    public ResponseEntity<?> acceptFriendRequest(@RequestParam String  email) throws Exception{
+        boolean result = relationshipService.acceptFriendRequest(email);
         if(result){
             return  ResponseEntity.ok("Friend request accepted successfully");
         }
@@ -61,8 +59,8 @@ public class RelationshipController {
     @PostMapping(value = "/cancelFriendRequest")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Cancel friend request",httpMethod = "POST")
-    public ResponseEntity<?> cancelFriendRequest(@RequestParam Long friendId) throws Exception{
-        boolean result = relationshipService.cancelFriendshipRequest(friendId);
+    public ResponseEntity<?> cancelFriendRequest(@RequestParam String email) throws Exception{
+        boolean result = relationshipService.cancelFriendshipRequest(email);
         if(result){
             return  ResponseEntity.ok("Friend request cancelled successfully");
         }
@@ -72,8 +70,8 @@ public class RelationshipController {
     @PostMapping(value = "/removeFriend")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @ApiOperation(value = "Remove friend from  users friends",httpMethod = "POST")
-    public ResponseEntity<?> removeFriend(@RequestParam Long friendId) throws Exception{
-        boolean result = relationshipService.removeFriend(friendId);
+    public ResponseEntity<?> removeFriend(@RequestParam String email) throws Exception{
+        boolean result = relationshipService.blockUser(email);
         if(result){
             return  ResponseEntity.ok("Friend removed successfully");
         }

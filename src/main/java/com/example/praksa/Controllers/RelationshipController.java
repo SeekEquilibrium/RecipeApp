@@ -53,7 +53,7 @@ public class RelationshipController {
         if(result){
             return  ResponseEntity.ok("Friend request accepted successfully");
         }
-        throw new Exception("Friend removal failed");
+        throw new Exception("Friend accepted  failed");
     }
 
     @PostMapping(value = "/cancelFriendRequest")

@@ -36,12 +36,15 @@ public class RelationshipService {
     public boolean createFriendRequest(String email) throws Exception {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        Optional<UserNode> receiverOptional = userNodeRepository.findByEmail(email);
+        if(!userNodeRepository.findByEmail(email).isPresent()) {
+           return false;
+        }
 
+        UserNode receiver = userNodeRepository.getUserNodeByEmail(email);
 
         // Check if a relationship already exists
         Optional<Relationship> existingRelationship =
-                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverOptional.get().getEmail());
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiver.getEmail());
 
         if (existingRelationship.isPresent()) {
             return false; // Relationship already exists
@@ -49,15 +52,16 @@ public class RelationshipService {
 
         // Also check reverse direction - if target has already sent a request to sender
         Optional<Relationship> reverseRelationship =
-                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverOptional.get().getEmail());
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiver.getEmail());
 
         if (reverseRelationship.isPresent()) {
             // If they sent us a request,and we're sending one back, auto-accept it
             if (reverseRelationship.get().getStatus() == 0) {
-                acceptFriendRequest(receiverOptional.get().getEmail());
+                acceptFriendRequest(receiver.getEmail());
                 return true;
             }
         }
+        relationshipRepository.createRelationship(userApp.getEmail(),receiver.getEmail());
         return  true;
     }
 
@@ -65,14 +69,14 @@ public class RelationshipService {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Optional<Relationship> requestOptional =
-                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverEmail);
+                relationshipRepository.findBySenderAndReceiver(receiverEmail, userApp.getEmail());
 
         if (requestOptional.isEmpty() || requestOptional.get().getStatus() != 0) {
             return false;
         }
 
         // Delete the pending request
-        relationshipRepository.deleteRelationship(userApp.getEmail(), receiverEmail);
+        relationshipRepository.deleteRelationship(receiverEmail, userApp.getEmail());
 
         // Create a bidirectional friendship
         relationshipRepository.createFriendship(userApp.getEmail(), receiverEmail);
@@ -110,7 +114,7 @@ public class RelationshipService {
 
     public boolean blockUser( String blockedEmail) {
         // Delete any existing relationships in both directions
-        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication();
+        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         relationshipRepository.deleteRelationship(userApp.getEmail(), blockedEmail);
         relationshipRepository.deleteRelationship(blockedEmail, userApp.getEmail());
 

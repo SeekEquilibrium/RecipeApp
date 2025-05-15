@@ -39,7 +39,7 @@ public class PostConstructConfig {
 
             UserApp user1 = new UserApp(2,"Nikola", "Slavnic","nikola@gmail.com", passwordEncoder.encode("nikola"),123 , Gender.MALE,new Adress("Grobljanska2","Ruma","Srbija"),true);
             user1.setRole(roleUser);
-            UserNode userNode1 = new UserNode(2L,"Nikola", "Slavnic","nikola@gmail.com",passwordEncoder.encode("nikola"),123);
+            UserNode userNode1 = new UserNode("Nikola", "Slavnic","nikola@gmail.com",passwordEncoder.encode("nikola"),123);
             userAppRepository.save(user1);
             userNodeRepository.save(userNode1);
         }

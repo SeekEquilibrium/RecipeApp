@@ -24,7 +24,7 @@ public class Relationship {
     private int status;
 
     @Property("createdAt")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt=LocalDateTime.now();;
 
     @TargetNode
     private UserNode friend;

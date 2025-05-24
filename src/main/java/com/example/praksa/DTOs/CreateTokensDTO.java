@@ -1,6 +1,5 @@
 package com.example.praksa.DTOs;
 
-import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

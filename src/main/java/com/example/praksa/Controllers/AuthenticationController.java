@@ -8,8 +8,8 @@ import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;
 import com.example.praksa.Models.UserAppToken;
 import com.example.praksa.Models.UserNode;
-import com.example.praksa.Repositories.UserAppRepository;
-import com.example.praksa.Repositories.UserNodeRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
+import com.example.praksa.Repositories.neo4j.UserNodeRepository;
 import com.example.praksa.Security.TokenHandler;
 import com.example.praksa.Services.RefreshTokenService;
 import com.example.praksa.Services.RoleService;
@@ -24,8 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.Optional;
 

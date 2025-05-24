@@ -1,16 +1,10 @@
 package com.example.praksa.Services;
 
 import com.example.praksa.Models.RecipeCategory;
-import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.RecipeCategoryRepository;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.RecipeCategoryRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-
-import java.util.List;
 
 @Service
 @Slf4j

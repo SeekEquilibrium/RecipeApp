@@ -4,19 +4,18 @@ import com.example.praksa.Converters.RecipeCategoryConverter;
 import com.example.praksa.Converters.RecipeDTOConverter;
 import com.example.praksa.DTOs.*;
 import com.example.praksa.Models.*;
-import com.example.praksa.Repositories.IngredientRepository;
-import com.example.praksa.Repositories.RecipeCategoryRepository;
-import com.example.praksa.Repositories.RecipeIngredientRepository;
-import com.example.praksa.Repositories.RecipeRepository;
+import com.example.praksa.Repositories.postgres.IngredientRepository;
+import com.example.praksa.Repositories.postgres.RecipeCategoryRepository;
+import com.example.praksa.Repositories.postgres.RecipeIngredientRepository;
+import com.example.praksa.Repositories.postgres.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service

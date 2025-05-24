@@ -1,8 +1,5 @@
 package com.example.praksa.DTOs;
 
-import com.example.praksa.Models.Ingredient;
-import com.example.praksa.Models.RecipeCategory;
-import com.example.praksa.Models.RecipeIngredient;
 import lombok.*;
 
 import java.util.List;

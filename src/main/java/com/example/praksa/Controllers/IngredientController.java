@@ -2,10 +2,8 @@ package com.example.praksa.Controllers;
 
 import com.example.praksa.DTOs.IngredientDTO;
 import com.example.praksa.Models.Ingredient;
-import com.example.praksa.Repositories.IngredientRepository;
 import com.example.praksa.Services.IngredientService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,14 +24,14 @@ public class IngredientController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Create a new ingredient",httpMethod = "POST")
+    @Operation(summary = "Create a new ingredient",method = "POST")
     public ResponseEntity<Ingredient> addIngredient(String requestIngredient) throws Exception {
         Ingredient ingredient = ingredientService.create(requestIngredient);
         return new ResponseEntity<>(ingredient, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAll")
-    @ApiOperation(value = "Gets a list of all ingredients",httpMethod = "GET")
+    @Operation(summary = "Gets a list of all ingredients",method = "GET")
     public ResponseEntity<?> getAllIngredients() throws Exception{
         List<IngredientDTO> ingredientList = ingredientService.getAll();
         return ResponseEntity.ok(ingredientList);
@@ -41,7 +39,7 @@ public class IngredientController {
 
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Deletes an ingredient with the given id",httpMethod = "DELETE")
+    @Operation(summary = "Deletes an ingredient with the given id",method = "DELETE")
     public ResponseEntity<?> deleteIngredient(@PathVariable Long id) throws Exception {
         ingredientService.deleteIngredient(id);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -2,18 +2,16 @@ package com.example.praksa.Services;
 
 import com.example.praksa.DTOs.MessageRequestDTO;
 import com.example.praksa.Models.Message;
-import com.example.praksa.Models.Relationship;
 import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.MessageRepository;
-import com.example.praksa.Repositories.RelationshipRepository;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.MessageRepository;
+import com.example.praksa.Repositories.neo4j.RelationshipRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

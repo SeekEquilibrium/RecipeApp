@@ -3,15 +3,14 @@ package com.example.praksa.Services;
 import com.example.praksa.Converters.RecipeDTOConverter;
 import com.example.praksa.DTOs.RecipeResponseDTO;
 import com.example.praksa.Models.Recipe;
-import com.example.praksa.Models.RecipeCategory;
 import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.RecipeRepository;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.RecipeRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 

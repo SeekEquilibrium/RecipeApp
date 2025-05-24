@@ -1,13 +1,12 @@
 package com.example.praksa.Models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
-import lombok.*;
-import org.apache.catalina.User;
-
-import java.util.ArrayList;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,7 +17,7 @@ import java.util.Set;
 public class RecipeCategory {
     @Id
     @SequenceGenerator(name = "categorySeqGen", sequenceName = "categorySeq", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "categorySeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", unique=true, nullable=false)
     private long id;
     @Column(unique = true)

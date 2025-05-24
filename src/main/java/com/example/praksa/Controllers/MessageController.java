@@ -4,14 +4,11 @@ import com.example.praksa.Converters.MessageDTOConverter;
 import com.example.praksa.DTOs.MessageDTO;
 import com.example.praksa.DTOs.MessageRequestDTO;
 import com.example.praksa.Models.Message;
-import com.example.praksa.Models.UserApp;
 import com.example.praksa.Services.MessageService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +35,7 @@ public class MessageController {
 
     @GetMapping(value = "/all/{id}")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" )
-    @ApiOperation(value = "Get all of users friend requests",httpMethod = "GET")
+    @Operation(summary = "Get all of users friend requests",method = "GET")
     public List<MessageDTO> getAllMessages(@PathVariable(value = "id") Long chatUserId) throws Exception {
         List<Message> messages = this.messageService.getAllMessages(chatUserId);
         return messages.stream().map(converter::messageToDTO).collect(Collectors.toList());

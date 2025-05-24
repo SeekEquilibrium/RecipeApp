@@ -1,7 +1,7 @@
 package com.example.praksa.Services;
 
 import com.example.praksa.Models.Role;
-import com.example.praksa.Repositories.RoleRepository;
+import com.example.praksa.Repositories.postgres.RoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

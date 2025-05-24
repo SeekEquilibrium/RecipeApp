@@ -1,14 +1,14 @@
 package com.example.praksa.Config;
 
 import com.example.praksa.Models.*;
-import com.example.praksa.Repositories.RoleRepository;
-import com.example.praksa.Repositories.UserAppRepository;
-import com.example.praksa.Repositories.UserNodeRepository;
+import com.example.praksa.Repositories.postgres.RoleRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
+import com.example.praksa.Repositories.neo4j.UserNodeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Component
 @Slf4j
@@ -32,14 +32,16 @@ public class PostConstructConfig {
             roleRepository.save(roleUser);
             roleRepository.save(roleAdmin);
 
-            UserApp admin1 = new UserApp(1,"Jovan", "Jovanovic","admin@gmail.com", passwordEncoder.encode("admin"),123 , Gender.MALE,new Adress("Grobljanska1","Ruma","Srbija"),true);
+            UserApp admin1 = new UserApp("Jovan", "Jovanovic","admin@gmail.com", passwordEncoder.encode("admin"),123 , Gender.MALE,new Adress("Grobljanska1","Ruma","Srbija"),true);
             admin1.setRole(roleAdmin);
             userAppRepository.save(admin1);
+            UserNode userNode = new UserNode("Jovan", "Jovanovic","admin@gmail.com", passwordEncoder.encode("admin"),123);
+            userNodeRepository.save(userNode);
 
 
-            UserApp user1 = new UserApp(2,"Nikola", "Slavnic","nikola@gmail.com", passwordEncoder.encode("nikola"),123 , Gender.MALE,new Adress("Grobljanska2","Ruma","Srbija"),true);
+            UserApp user1 = new UserApp("Nikola", "Slavnic","nikola@gmail.com", passwordEncoder.encode("nikola"),123 , Gender.MALE,new Adress("Grobljanska2","Ruma","Srbija"),true);
             user1.setRole(roleUser);
-            UserNode userNode1 = new UserNode(2L,"Nikola", "Slavnic","nikola@gmail.com",passwordEncoder.encode("nikola"),123);
+            UserNode userNode1 = new UserNode("Nikola", "Slavnic","nikola@gmail.com",passwordEncoder.encode("nikola"),123);
             userAppRepository.save(user1);
             userNodeRepository.save(userNode1);
         }

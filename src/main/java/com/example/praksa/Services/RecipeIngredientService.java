@@ -6,13 +6,13 @@ import com.example.praksa.DTOs.RecipeIngredientRequestDTO;
 import com.example.praksa.Models.Ingredient;
 import com.example.praksa.Models.Recipe;
 import com.example.praksa.Models.RecipeIngredient;
-import com.example.praksa.Repositories.IngredientRepository;
-import com.example.praksa.Repositories.RecipeIngredientRepository;
-import com.example.praksa.Repositories.RecipeRepository;
+import com.example.praksa.Repositories.postgres.IngredientRepository;
+import com.example.praksa.Repositories.postgres.RecipeIngredientRepository;
+import com.example.praksa.Repositories.postgres.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -63,7 +63,7 @@ public class RecipeIngredientService {
             log.error("Ingredient not found");
             return new Exception("Ingredient not found");
         });
-        Recipe recipe = recipeRepository.getById(recipeId);
+        Recipe recipe = recipeRepository.getReferenceById(recipeId);
         recipe.removeRecipeIngredient(recipeIngredient);
         recipeRepository.save(recipe);
         recipeIngredientRepository.delete(recipeIngredient);

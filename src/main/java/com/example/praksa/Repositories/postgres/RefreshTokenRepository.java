@@ -1,4 +1,4 @@
-package com.example.praksa.Repositories;
+package com.example.praksa.Repositories.postgres;
 
 import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;

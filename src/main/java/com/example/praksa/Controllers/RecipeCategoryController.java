@@ -4,10 +4,10 @@ import com.example.praksa.Converters.RecipeCategoryConverter;
 import com.example.praksa.DTOs.RecipeCategoryDTO;
 import com.example.praksa.DTOs.RecipeCategoryListDTO;
 import com.example.praksa.Models.RecipeCategory;
-import com.example.praksa.Repositories.RecipeCategoryRepository;
+import com.example.praksa.Repositories.postgres.RecipeCategoryRepository;
 import com.example.praksa.Services.FavouriteCategoryService;
 import com.example.praksa.Services.RecipeCategoryService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +34,7 @@ public class RecipeCategoryController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @ApiOperation(value = "Create a new recipe category", httpMethod = "POST")
+    @Operation(summary = "Create a new recipe category", method = "POST")
     public ResponseEntity<RecipeCategoryDTO> addRecipeCategory(@RequestBody RecipeCategoryDTO categoryDTO){
         if(this.recipeCategoryRepository.getByName(categoryDTO.getName()) == null){
             RecipeCategory category = new RecipeCategory(categoryDTO.getName(), categoryDTO.getDescription());
@@ -46,7 +46,7 @@ public class RecipeCategoryController {
 
     }
     @GetMapping(value ="/getAll")
-    @ApiOperation(value = "Get all recipe categories", httpMethod = "GET")
+    @Operation(summary = "Get all recipe categories", method = "GET")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getAll() throws Exception {
         List<RecipeCategory> recipeCategoryList = recipeCategoryRepository.findAll();
@@ -56,7 +56,7 @@ public class RecipeCategoryController {
     }
 
     @DeleteMapping
-    @ApiOperation(value = "Deletes recipeCategory with the given id")
+    @Operation(summary = "Deletes recipeCategory with the given id")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> delete(@RequestParam Long id) throws Exception{
         recipeCategoryService.deleteRecipeCategory(id);
@@ -64,15 +64,15 @@ public class RecipeCategoryController {
     }
 
     @PostMapping(value="/favourite/add/{categoryId}")
-    @ApiOperation(value = "Add the recipe category to your favourites ", httpMethod = "POST")
+    @Operation(summary = "Add the recipe category to your favourites ", method = "POST")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> addToFavourites (@PathVariable Long categoryId) throws Exception {
         favouriteCategoryService.addFavouriteCategory(categoryId);
-        return new ResponseEntity<>(String.format("Recipe category %d successfully added to favourites",categoryId),HttpStatus.CREATED);
+        return new ResponseEntity<>("Recipe category %d successfully added to favourites".formatted(categoryId),HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/favourite/getAll")
-    @ApiOperation(value = "Retrieve all favourite categories from user",httpMethod = "GET")
+    @Operation(summary = "Retrieve all favourite categories from user",method = "GET")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getAllFavourites() {
         Set<RecipeCategory> recipeCategoryList = favouriteCategoryService.getFavouritesForUser();
@@ -81,7 +81,7 @@ public class RecipeCategoryController {
 
 
     @DeleteMapping(value = "/favourite/delete/{categoryId}")
-    @ApiOperation(value = "Delete recipe category withe given id from user's favourites",httpMethod = "DELETE")
+    @Operation(summary = "Delete recipe category withe given id from user's favourites",method = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> deleteFavourite(@PathVariable Long categoryId) throws Exception {
         favouriteCategoryService.deleteFavouriteCategory(categoryId);

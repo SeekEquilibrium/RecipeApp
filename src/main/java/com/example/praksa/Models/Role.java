@@ -1,6 +1,6 @@
 package com.example.praksa.Models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class Role  implements GrantedAuthority {
     @Id
     @SequenceGenerator(name = "RoleSeqGen", sequenceName = "RoleSeq", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "RoleSeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name="name")
     String name;

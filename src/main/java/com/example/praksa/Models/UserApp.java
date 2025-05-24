@@ -1,15 +1,16 @@
 package com.example.praksa.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "userApp")
@@ -20,7 +21,7 @@ import java.util.*;
 public class UserApp implements UserDetails {
     @Id
     @SequenceGenerator(name = "userAppSeqGen", sequenceName = "userAppSeq", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "userAppSeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id",  nullable=false)
     private  long id;
     @Column
@@ -92,6 +93,16 @@ public class UserApp implements UserDetails {
         this.isRegistered = isRegistered;
     }
 
+    public UserApp(String name, String surname, String email, String password, int phoneNumber, Gender gender, Adress adress, boolean isRegistered) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.adress = adress;
+        this.isRegistered = isRegistered;
+    }
 
     @JsonIgnore
     @Override

@@ -2,15 +2,12 @@ package com.example.praksa.Services;
 
 import com.example.praksa.Converters.IngredientDTOConverter;
 import com.example.praksa.DTOs.IngredientDTO;
-import com.example.praksa.DTOs.RecipeCategoryDTO;
 import com.example.praksa.Models.Ingredient;
-import com.example.praksa.Repositories.IngredientRepository;
+import com.example.praksa.Repositories.postgres.IngredientRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

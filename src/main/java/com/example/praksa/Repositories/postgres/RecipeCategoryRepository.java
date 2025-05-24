@@ -1,12 +1,10 @@
-package com.example.praksa.Repositories;
+package com.example.praksa.Repositories.postgres;
 
 import com.example.praksa.Models.RecipeCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,7 +12,7 @@ public interface RecipeCategoryRepository extends JpaRepository<RecipeCategory,L
     RecipeCategory getByName(String name);
     boolean existsByName(String name);
 
-    @Query("SELECT us from UserApp us join fetch us.favouriteCategories fav  where fav.id =?1 and us.id=?2 ")
+    @Query("SELECT us from UserApp us join fetch us.favouriteCategories fav  where fav.id =:categoryId and us.id=:userAppId ")
     Optional<RecipeCategory> findByCategoryIdAndUserAppId(Long categoryId, Long userAppId);
     Optional<RecipeCategory> findByName(String name);
 

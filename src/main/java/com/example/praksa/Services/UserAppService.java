@@ -1,12 +1,8 @@
 package com.example.praksa.Services;
 
-import com.example.praksa.DTOs.CreateTokensDTO;
-import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import com.example.praksa.Security.TokenHandler;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

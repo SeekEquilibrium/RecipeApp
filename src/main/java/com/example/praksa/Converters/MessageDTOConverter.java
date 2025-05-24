@@ -2,10 +2,8 @@ package com.example.praksa.Converters;
 
 import com.example.praksa.DTOs.MessageDTO;
 import com.example.praksa.Models.Message;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class MessageDTOConverter {

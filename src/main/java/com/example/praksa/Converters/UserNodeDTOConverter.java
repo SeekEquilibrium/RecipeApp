@@ -1,8 +1,6 @@
 package com.example.praksa.Converters;
 
 import com.example.praksa.DTOs.UserDTO;
-import com.example.praksa.Models.Adress;
-import com.example.praksa.Models.UserApp;
 import com.example.praksa.Models.UserNode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

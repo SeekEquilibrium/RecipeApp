@@ -1,6 +1,6 @@
 package com.example.praksa.Models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.*;
 

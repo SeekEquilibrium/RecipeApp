@@ -2,17 +2,14 @@ package com.example.praksa.Services;
 
 import com.example.praksa.Models.RecipeCategory;
 import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.RecipeCategoryRepository;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.RecipeCategoryRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import jakarta.transaction.Transactional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

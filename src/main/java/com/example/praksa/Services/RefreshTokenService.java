@@ -2,12 +2,10 @@ package com.example.praksa.Services;
 
 import com.example.praksa.Models.RefreshToken;
 import com.example.praksa.Models.UserApp;
-import com.example.praksa.Repositories.RefreshTokenRepository;
-import com.example.praksa.Repositories.UserAppRepository;
+import com.example.praksa.Repositories.postgres.RefreshTokenRepository;
+import com.example.praksa.Repositories.postgres.UserAppRepository;
 
-import javax.transaction.Transactional;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.Authentication;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.example.praksa.Repositories;
+package com.example.praksa.Repositories.postgres;
 
 import com.example.praksa.Models.Ingredient;
 import org.springframework.data.jpa.repository.JpaRepository;

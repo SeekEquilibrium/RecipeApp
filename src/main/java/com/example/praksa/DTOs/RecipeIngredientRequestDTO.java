@@ -1,6 +1,6 @@
 package com.example.praksa.DTOs;
 
-import com.sun.istack.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data

@@ -2,8 +2,6 @@ package com.example.praksa.DTOs;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor

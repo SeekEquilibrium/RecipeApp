@@ -1,15 +1,13 @@
 package com.example.praksa.Models;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -19,7 +17,7 @@ import java.util.Set;
 public class Recipe {
     @Id
     @SequenceGenerator(name = "recipeGen", sequenceName = "recipeSeq",initialValue = 1,allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "recipeSeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(unique = true)
     private String name;

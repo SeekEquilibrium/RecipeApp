@@ -3,10 +3,7 @@ package com.example.praksa.Models;
 
 import lombok.*;
 
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
-import java.sql.Types;
+import jakarta.persistence.*;
 
 @Data
 @Entity

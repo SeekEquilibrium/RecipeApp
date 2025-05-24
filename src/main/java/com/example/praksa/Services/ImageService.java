@@ -1,14 +1,14 @@
 package com.example.praksa.Services;
 
 import com.example.praksa.Models.Image;
-import com.example.praksa.Repositories.ImageRepository;
+import com.example.praksa.Repositories.postgres.ImageRepository;
 import com.example.praksa.Utills.ImageUtills;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.exception.ContextedRuntimeException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.zip.DataFormatException;

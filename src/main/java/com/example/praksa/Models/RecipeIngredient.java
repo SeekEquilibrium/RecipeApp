@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class RecipeIngredient {
     @Id
     @SequenceGenerator(name = "recipeIngredientSeqGen", sequenceName = "recipeIngredientSeq", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "recipeIngredientSeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", unique=true, nullable=false)
     private Long id;
 

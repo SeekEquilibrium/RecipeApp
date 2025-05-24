@@ -1,8 +1,5 @@
 package com.example.praksa.DTOs;
 
-import com.example.praksa.Models.Adress;
-import com.example.praksa.Models.Gender;
-import com.example.praksa.Models.UserApp;
 import lombok.*;
 
 @Getter

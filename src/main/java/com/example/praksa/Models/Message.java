@@ -2,7 +2,7 @@ package com.example.praksa.Models;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Message {
     @Id
     @SequenceGenerator(name = "messageGen", sequenceName = "messageSeq",initialValue = 1,allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "messageSeqGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne(optional = false, targetEntity = UserApp.class)

@@ -1,49 +1,35 @@
 package com.example.praksa.Models;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.neo4j.core.schema.*;
-import org.springframework.data.neo4j.core.schema.Relationship;
+import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Property;
 
-import javax.persistence.GenerationType;
-import javax.persistence.SequenceGenerator;
-import java.util.HashSet;
-import java.util.Set;
-
-@Node("User")
+@Node("UserNode")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class UserNode {
     @Id
-    @SequenceGenerator(name = "userAppSeqGen", sequenceName = "userAppSeq", initialValue = 1, allocationSize = 1)
-    @javax.persistence.GeneratedValue(strategy = GenerationType.IDENTITY, generator = "userAppSeqGen")
-    private long id;
+    private String email;
 
-    @Property("Name")
+    @Property("name")
     private String name;
 
-    @Property("Surname")
+    @Property("surname")
     private String surname;
-
-    @Property("email")
-    private String email;
 
     @Property("password")
     private String password;
 
-    @Property("Phone number")
-    private int phoneNumber;
-
-    @Relationship(type = "FRIENDS_WITH",direction = Relationship.Direction.OUTGOING)
-    private Set<UserNode> friends = new HashSet<>();
+    @Property("phoneNumber")
+    private Integer phoneNumber;
 
 
-    public UserNode(long id, String name, String surname, String email, String password, int phoneNumber) {
-        this.id = id;
+    public UserNode( String name, String surname, String email, String password, int phoneNumber) {
+
         this.name = name;
         this.surname = surname;
         this.email = email;

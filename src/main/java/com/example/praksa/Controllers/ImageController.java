@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 
 @RestController
@@ -20,14 +19,14 @@ import static org.springframework.http.MediaType.IMAGE_PNG_VALUE;
 public class ImageController {
     private final ImageService imageService;
 
-    @RequestMapping(method = RequestMethod.POST , consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping( consumes= MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" )
     public ResponseEntity<?> uploadImage(@RequestPart("image")  MultipartFile file) throws IOException {
         String uploadImage = imageService.uploadImage(file);
         return ResponseEntity.status(HttpStatus.OK).body(uploadImage);
     }
 
-    @RequestMapping(method = RequestMethod.GET , value = "getImage")
+    @GetMapping("getImage")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" )
     public ResponseEntity<?> downloadImage(@RequestParam Long imageId) {
         byte[] imageData = imageService.downloadImage(imageId);

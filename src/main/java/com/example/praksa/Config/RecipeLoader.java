@@ -1,62 +1,85 @@
 package com.example.praksa.Config;
 
-import com.example.praksa.Models.RecipeCSV;
+import com.example.praksa.Utills.RecipeCsvRepresentation;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+import jakarta.annotation.PostConstruct;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class RecipeLoader {
-   /* private List<RecipeCSV> recipes = new ArrayList<>();
+
+    private final VectorStore vectorStore;
+
+    @Value("${app.vector-store.reload:false}")
+    private boolean reload;
+
+    public RecipeLoader(VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
+    }
 
     @PostConstruct
     public void load() throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader("recipes.csv"))) {
-            String line;
-            reader.readLine(); // skip header
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                RecipeCSV r = new RecipeCSV();
-                r.setName(parts[0].trim());
+        if (!reload) {
+            return;
+        }
 
-                r.setName(parts[0].trim());
-                r.setCookTime(parts[1].trim());
-                r.setPrepTime(parts[2].trim());
-                r.setRecipeCategory(parts[3].trim());
+        ClassPathResource resource = new ClassPathResource("Food_Recipe.csv");
+        try (Reader reader = new InputStreamReader(resource.getInputStream())) {
+            HeaderColumnNameMappingStrategy<RecipeCsvRepresentation> strategy = new HeaderColumnNameMappingStrategy<>();
+            strategy.setType(RecipeCsvRepresentation.class);
 
-                r.setKeywords(Arrays.stream(parts[4].replace("\"", "").split(","))
-                        .map(String::trim).toList());
+            CsvToBean<RecipeCsvRepresentation> csvToBean = new CsvToBeanBuilder<RecipeCsvRepresentation>(reader)
+                    .withMappingStrategy(strategy)
+                    .withIgnoreEmptyLine(true)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
 
-                r.setIngredientQuantities(Arrays.stream(parts[5].replace("\"", "").split(","))
-                        .map(String::trim).toList());
+            List<Document> documents = csvToBean.parse().stream()
+                    .map(row -> {
+                        String content = String.format(
+                                "Recipe: %s\nCuisine: %s\nCourse: %s\nDiet: %s\n" +
+                                "Prep: %s mins | Cook: %s mins\n" +
+                                "Ingredients: %s\nQuantities: %s\n" +
+                                "Instructions: %s",
+                                row.getName(), row.getCuisine(), row.getCourse(), row.getDiet(),
+                                row.getPrepTime(), row.getCookTime(),
+                                row.getIngredientsName(), row.getIngredientsQuantity(),
+                                row.getInstructions()
+                        );
+                        Map<String, Object> metadata = Map.of(
+                                "name", row.getName() != null ? row.getName() : "",
+                                "cuisine", row.getCuisine() != null ? row.getCuisine() : "",
+                                "imageUrl", row.getImageUrl() != null ? row.getImageUrl() : ""
+                        );
+                        return new Document(content, metadata);
+                    })
+                    .toList();
 
-                r.setIngredientParts(Arrays.stream(parts[6].replace("\"", "").split(","))
-                        .map(String::trim).toList());
-
-                r.setCalories(Integer.parseInt(parts[7].trim()));
-                r.setFatContent(parts[8].trim());
-                r.setCarbohydrateContent(parts[9].trim());
-                r.setFiberContent(parts[10].trim());
-                r.setSugarContent(parts[11].trim());
-                r.setProteinContent(parts[12].trim());
-
-                r.setServings(Integer.parseInt(parts[13].trim()));
-                r.setInstructions(parts[14].trim());
-
-                recipes.add(r);
+            int batchSize = 10;
+            for (int i = 0; i < documents.size(); i += batchSize) {
+                List<Document> batch = documents.subList(i, Math.min(i + batchSize, documents.size()));
+                vectorStore.add(batch);
+                if (i + batchSize < documents.size()) {
+                    try {
+                        Thread.sleep(15000); // 15s pause keeps us well under 40K TPM
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
             }
         }
     }
-
-    public List<RecipeCSV> getAll() {
-        return recipes;
-    }
-
-*/
 }

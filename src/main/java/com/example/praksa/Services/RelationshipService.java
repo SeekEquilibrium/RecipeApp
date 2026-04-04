@@ -49,7 +49,7 @@ public class RelationshipService {
 
         // Also check reverse direction - if target has already sent a request to sender
         Optional<Relationship> reverseRelationship =
-                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiver.getEmail());
+                relationshipRepository.findBySenderAndReceiver(receiver.getEmail(), userApp.getEmail());
 
         if (reverseRelationship.isPresent()) {
             // If they sent us a request,and we're sending one back, auto-accept it
@@ -96,15 +96,13 @@ public class RelationshipService {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Optional<Relationship> requestOptional =
-                relationshipRepository.findBySenderAndReceiver(receiverEmail, userApp.getEmail());
+                relationshipRepository.findBySenderAndReceiver(userApp.getEmail(), receiverEmail);
 
         if (requestOptional.isEmpty() || requestOptional.get().getStatus() != 0) {
             return false;
         }
 
-        // Update the request status
-        relationshipRepository.updateRelationshipStatus(
-                userApp.getEmail(), receiverEmail, 2);
+        relationshipRepository.deleteRelationship(userApp.getEmail(), receiverEmail);
 
         return true;
     }
@@ -116,7 +114,7 @@ public class RelationshipService {
         relationshipRepository.deleteRelationship(blockedEmail, userApp.getEmail());
 
         // Create a blocking relationship
-        relationshipRepository.updateRelationshipStatus(userApp.getEmail(), blockedEmail, 2);
+        relationshipRepository.createBlockRelationship(userApp.getEmail(), blockedEmail);
 
         return true;
     }

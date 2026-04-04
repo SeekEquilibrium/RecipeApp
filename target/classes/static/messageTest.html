@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+    <title>WS Chat Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+  </head>
+  <body>
+    <input id="jwt" placeholder="Paste JWT here" style="width:500px"/>
+    <input id="toUserId" placeholder="Recipient user ID (from DB)"/>
+    <button onclick="connect()">Connect</button>
+    <br/><br/>
+    <input id="msg" placeholder="Message"/>
+    <button onclick="send()">Send</button>
+    <pre id="log"></pre>
+
+    <script>
+      let stompClient;
+
+      function log(msg) {
+        document.getElementById('log').textContent += msg + '\n';
+      }
+
+      function connect() {
+        const jwt = document.getElementById('jwt').value;
+        const socket = new SockJS('http://localhost:8080/socket');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(
+          { Authorization: 'Bearer ' + jwt },
+          function () {
+            log('Connected!');
+            stompClient.subscribe('/user/queue/position-update', function (msg) {
+              log('Received: ' + msg.body);
+            });
+          },
+          function (err) {
+            log('Error: ' + JSON.stringify(err));
+          }
+        );
+      }
+
+      function send() {
+        const toUserId = document.getElementById('toUserId').value;
+        const content = document.getElementById('msg').value;
+        stompClient.send('/app/message', {}, JSON.stringify({
+          toUserId: parseInt(toUserId),
+          content: content
+        }));
+      }
+    </script>
+  </body>
+  </html>

@@ -60,17 +60,18 @@ public class MessageService {
             return new Exception("User not found");
         });
 
-        //Relationship relationship = relationshipRepository.findRelationshipWithFriendWithStatus(fromUser.getId(), toUser.getId(), 1);
+        boolean areFriends = relationshipRepository
+                .findBySenderAndReceiver(fromUser.getEmail(), toUser.getEmail())
+                .isPresent();
 
-       // if (relationship == null) {
-         //   throw  new Exception("Relationship not found");
-//        }
-//
+        if (!areFriends) {
+            throw new Exception("Users are not friends");
+        }
+
         Message message = new Message();
         message.setContent(messageCreateBindingModel.getContent());
         message.setFromUser(fromUser);
         message.setToUser(toUser);
-       // message.setRelationship(relationship);
         message.setTime(LocalDateTime.now());
 
         messageRepository.save(message);

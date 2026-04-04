@@ -16,7 +16,6 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import io.jsonwebtoken.Jwts;
 import java.util.Optional;
 
 @Configuration
@@ -37,7 +36,7 @@ public class ApplicationWebSocketConfiguration implements WebSocketMessageBroker
         // SockJS is used (both client and server side) to allow alternative
         // messaging options if WebSocket is not available.
         registry.addEndpoint("/socket")
-                .setAllowedOrigins("*")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 
@@ -71,16 +70,11 @@ public class ApplicationWebSocketConfiguration implements WebSocketMessageBroker
     }
 
     private JWTAuthenticationToken getJWTAuthenticationToken(String token) {
-        if (token != null) {
-            String username = Jwts.parser()
-                    .setSigningKey("Secret".getBytes())
-                    .parseClaimsJws(token.replace("Bearer ", ""))
-                    .getBody()
-                    .getSubject();
+        if (token != null && tokenHandler.validateJwtToken(token)) {
+            String username = tokenHandler.getUsernameFromToken(token);
 
             if (username != null) {
                 UserApp userData = this.userAppService.findByEmail(username);
-
 
                 JWTAuthenticationToken jwtAuthenticationToken =
                         new JWTAuthenticationToken(userData.getAuthorities(), token, userData);

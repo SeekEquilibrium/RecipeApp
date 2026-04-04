@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface RelationshipRepository extends Neo4jRepository<Relationship,Long> {
 
-    @Query("MATCH (sender:UserNode {email: $senderEmail})-[r:RELATES_TO]->(receiver:UserNode {email: $receiverEmail}) RETURN r")
+    @Query("MATCH (sender:UserNode {email: $senderEmail})-[r:RELATES_TO]->(receiver:UserNode {email: $receiverEmail}) WHERE r.status=1 RETURN r")
     Optional<Relationship> findBySenderAndReceiver(
             @Param("senderEmail") String senderEmail,
             @Param("receiverEmail") String receiverEmail);
@@ -42,6 +42,12 @@ public interface RelationshipRepository extends Neo4jRepository<Relationship,Lon
             "CREATE (u1)-[r1:RELATES_TO {status: 1, createdAt: datetime()}]->(u2) " +
             "CREATE (u2)-[r2:RELATES_TO {status: 1, createdAt: datetime()}]->(u1)")
     void createFriendship(
+            @Param("email1") String email1,
+            @Param("email2") String email2);
+
+    @Query("MATCH (u1:UserNode {email: $email1}), (u2:UserNode {email: $email2}) " +
+            "CREATE (u1)-[r:RELATES_TO {status: 2, createdAt: datetime()}]->(u2)")
+    void createBlockRelationship(
             @Param("email1") String email1,
             @Param("email2") String email2);
 

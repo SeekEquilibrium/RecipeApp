@@ -127,8 +127,8 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
 
         // Option 2: For production without credentials (uncomment if needed)
-        // configuration.setAllowedOrigins(List.of("*"));
-        // configuration.setAllowCredentials(false);
+         //configuration.setAllowedOrigins(List.of("*"));
+         //configuration.setAllowCredentials(false);
 
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

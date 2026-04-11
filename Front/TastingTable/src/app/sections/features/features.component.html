@@ -1,0 +1,25 @@
+<section class="features-section" id="features">
+  <div class="features-header">
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-subtitle">Login to unlock the full TastingTable experience</p>
+  </div>
+
+  <div class="features-grid">
+    @for (feature of features; track feature.title) {
+      <div class="feature-card">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-desc">{{ feature.description }}</p>
+        <button class="btn-outline feature-btn" (click)="openModal(feature.action)">
+          &#x1F512; Login to {{ feature.action }}
+        </button>
+      </div>
+    }
+  </div>
+</section>
+
+@if (showModal()) {
+  <app-login-modal
+    [action]="modalAction()"
+    (closed)="closeModal()" />
+}

@@ -1,0 +1,63 @@
+<section class="featured" id="recipes">
+  <div class="featured-header">
+    <div>
+      <h2 class="section-title">Featured Recipe</h2>
+      <p class="section-subtitle">A taste of what's waiting for you inside</p>
+    </div>
+    <button class="btn-primary" (click)="openModal()">View All Recipes &rarr;</button>
+  </div>
+
+  @if (loading()) {
+    <div class="featured-skeleton">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line skeleton-line--wide"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line skeleton-line--short"></div>
+      </div>
+    </div>
+  } @else if (recipe()) {
+    <div class="featured-card">
+      <div class="featured-img-wrap">
+        @if (recipe()!.imageId) {
+          <img [src]="'http://localhost:8080/image/getImage?imageId=' + recipe()!.imageId"
+               [alt]="recipe()!.name"
+               class="featured-img" />
+        } @else {
+          <div class="featured-img-placeholder">&#x1F37D;&#xFE0F;</div>
+        }
+        <span class="featured-badge">&#x2B50; Featured</span>
+      </div>
+
+      <div class="featured-body">
+        @if (recipe()!.categoryName) {
+          <span class="featured-category">{{ recipe()!.categoryName }}</span>
+        }
+        <h3 class="featured-title">{{ recipe()!.name }}</h3>
+        @if (recipe()!.description) {
+          <p class="featured-desc">{{ recipe()!.description }}</p>
+        }
+
+        <div class="featured-locked" (click)="openModal()">
+          <span class="lock-icon">&#x1F512;</span>
+          <span>Login to see full recipe details</span>
+        </div>
+
+        <button class="btn-primary featured-cta" (click)="openModal()">
+          View All Recipes &rarr;
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="featured-empty">
+      <span>&#x1F4AD;</span>
+      <p>Recipes are loading — make sure the backend is running.</p>
+    </div>
+  }
+</section>
+
+@if (showModal()) {
+  <app-login-modal
+    action="view all recipes"
+    (closed)="closeModal()" />
+}

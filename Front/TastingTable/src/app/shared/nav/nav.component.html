@@ -1,0 +1,23 @@
+<nav class="nav">
+  <div class="nav-left">
+    <button class="hamburger" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+      <span></span><span></span><span></span>
+    </button>
+    <a routerLink="/" class="nav-logo">
+      <span class="logo-icon">&#x1F373;</span>
+      <span class="logo-text">TastingTable</span>
+    </a>
+  </div>
+
+  <div class="nav-center">
+    <a routerLink="/" class="nav-link">Home</a>
+    <a href="#recipes" class="nav-link">Recipes</a>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#categories" class="nav-link">Categories</a>
+  </div>
+
+  <div class="nav-right">
+    <a routerLink="/login" class="btn-outline">Login</a>
+    <a routerLink="/register" class="btn-primary">Get Started</a>
+  </div>
+</nav>

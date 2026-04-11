@@ -1,0 +1,37 @@
+<section class="categories-section" id="categories">
+  <div class="categories-header">
+    <h2 class="section-title">Explore by Category</h2>
+    <p class="section-subtitle">Browse recipes across a variety of cuisines and meal types</p>
+  </div>
+
+  @if (loading()) {
+    <div class="categories-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="category-skeleton"></div>
+      }
+    </div>
+  } @else if (categories().length > 0) {
+    <div class="categories-grid">
+      @for (cat of categories(); track cat.id) {
+        <button class="category-chip" (click)="openModal(cat.name)">
+          <span class="category-icon">&#x1F37D;&#xFE0F;</span>
+          <span class="category-name">{{ cat.name }}</span>
+          <span class="category-lock">&#x1F512;</span>
+        </button>
+      }
+    </div>
+  } @else {
+    <p class="categories-empty">Categories will appear here once the backend is running.</p>
+  }
+
+  <div class="categories-cta">
+    <p>Want to explore all recipes by category?</p>
+    <button class="btn-primary" (click)="openModal('all categories')">Login to Browse All &rarr;</button>
+  </div>
+</section>
+
+@if (showModal()) {
+  <app-login-modal
+    [action]="'browse ' + selectedCategory()"
+    (closed)="closeModal()" />
+}

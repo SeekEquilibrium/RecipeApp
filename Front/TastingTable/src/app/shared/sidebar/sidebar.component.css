@@ -1,0 +1,159 @@
+/* ── Base: desktop collapsed (icon-only rail) ── */
+.sidebar {
+  width: 64px;
+  min-width: 64px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.5rem;
+  position: sticky;
+  top: var(--nav-height);
+  height: calc(100vh - var(--nav-height));
+  overflow: hidden;
+  transition: width 0.28s ease, min-width 0.28s ease, transform 0.28s ease;
+  z-index: 99;
+}
+
+/* ── Desktop open: full width ── */
+.sidebar--open {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+}
+
+/* ── Toggle button ── */
+.sidebar-top {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+}
+
+.sidebar-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.sidebar-toggle:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.toggle-icon {
+  display: inline-block;
+  font-size: 0.7rem;
+  transition: transform 0.28s ease;
+  color: var(--color-text-muted);
+}
+.sidebar-toggle:hover .toggle-icon {
+  color: #fff;
+}
+.toggle-icon--rotated {
+  transform: rotate(180deg);
+}
+
+/* ── Nav links ── */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.6rem;
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sidebar-link:hover,
+.sidebar-link.active {
+  color: var(--color-primary);
+  background: var(--color-surface-warm);
+}
+
+.sidebar-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+/* Labels: hidden when collapsed */
+.sidebar-label {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  overflow: hidden;
+}
+.sidebar:not(.sidebar--open) .sidebar-label {
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+/* ── CTA section ── */
+.sidebar-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  overflow: hidden;
+}
+
+.sidebar-cta-text {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+.sidebar:not(.sidebar--open) .sidebar-cta-text {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 8px 10px;
+}
+
+/* ── Mobile: hidden by default, overlay when open ── */
+.sidebar--mobile {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  height: calc(100vh - var(--nav-height));
+  width: var(--sidebar-width) !important;
+  min-width: var(--sidebar-width) !important;
+  transform: translateX(-100%);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.28s ease;
+}
+.sidebar--mobile.sidebar--open {
+  transform: translateX(0);
+}

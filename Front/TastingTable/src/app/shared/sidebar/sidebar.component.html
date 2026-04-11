@@ -1,0 +1,30 @@
+<aside class="sidebar"
+  [class.sidebar--open]="open"
+  [class.sidebar--mobile]="mobile">
+
+  <div class="sidebar-top">
+    <button class="sidebar-toggle" (click)="toggle()" [attr.aria-label]="open ? 'Collapse sidebar' : 'Expand sidebar'">
+      <span class="toggle-icon" [class.toggle-icon--rotated]="!open">&#x276E;</span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="#" class="sidebar-link active">
+      <span class="sidebar-icon">&#x1F3E0;</span>
+      <span class="sidebar-label">Home</span>
+    </a>
+    <a href="#recipes" class="sidebar-link">
+      <span class="sidebar-icon">&#x1F4D6;</span>
+      <span class="sidebar-label">Recipes</span>
+    </a>
+    <a href="#features" class="sidebar-link">
+      <span class="sidebar-icon">&#x2728;</span>
+      <span class="sidebar-label">Features</span>
+    </a>
+    <a href="#categories" class="sidebar-link">
+      <span class="sidebar-icon">&#x1F3F7;&#xFE0F;</span>
+      <span class="sidebar-label">Categories</span>
+    </a>
+  </nav>
+
+</aside>

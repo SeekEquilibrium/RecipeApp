@@ -1,0 +1,92 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <a routerLink="/" class="auth-back">&larr; Back to Home</a>
+    <div class="auth-logo">&#x1F373;</div>
+    <h1>Join TastingTable</h1>
+    <p class="auth-sub">Create your free account</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="name">First Name</label>
+          <input id="name" type="text" formControlName="name" placeholder="Name"
+            [class.invalid]="submitted && f['name'].errors" />
+          <span class="error" *ngIf="submitted && f['name'].errors?.['required']">Required.</span>
+        </div>
+        <div class="field">
+          <label for="surname">Last Name</label>
+          <input id="surname" type="text" formControlName="surname" placeholder="Surname"
+            [class.invalid]="submitted && f['surname'].errors" />
+          <span class="error" *ngIf="submitted && f['surname'].errors?.['required']">Required.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="your_email@example.com"
+          [class.invalid]="submitted && f['email'].errors" />
+        <span class="error" *ngIf="submitted && f['email'].errors?.['required']">Email is required.</span>
+        <span class="error" *ngIf="submitted && f['email'].errors?.['email']">Enter a valid email address.</span>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Min. 8 characters"
+          [class.invalid]="submitted && f['password'].errors" />
+        <span class="error" *ngIf="submitted && f['password'].errors?.['required']">Password is required.</span>
+        <span class="error" *ngIf="submitted && f['password'].errors?.['minlength']">Password must be at least 8 characters.</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="phoneNumber">Phone Number</label>
+          <input id="phoneNumber" type="tel" formControlName="phoneNumber"
+            [class.invalid]="submitted && f['phoneNumber'].errors" />
+          <span class="error" *ngIf="submitted && f['phoneNumber'].errors?.['required']">Required.</span>
+        </div>
+        <div class="field">
+          <label for="gender">Gender</label>
+          <select id="gender" formControlName="gender"
+            [class.invalid]="submitted && f['gender'].errors">
+            <option value="" disabled>Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="error" *ngIf="submitted && f['gender'].errors?.['required']">Required.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="street">Street</label>
+        <input id="street" type="text" formControlName="street" 
+          [class.invalid]="submitted && f['street'].errors" />
+        <span class="error" *ngIf="submitted && f['street'].errors?.['required']">Street is required.</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="city">City</label>
+          <input id="city" type="text" formControlName="city" 
+            [class.invalid]="submitted && f['city'].errors" />
+          <span class="error" *ngIf="submitted && f['city'].errors?.['required']">Required.</span>
+        </div>
+        <div class="field">
+          <label for="country">Country</label>
+          <input id="country" type="text" formControlName="country" 
+            [class.invalid]="submitted && f['country'].errors" />
+          <span class="error" *ngIf="submitted && f['country'].errors?.['required']">Required.</span>
+        </div>
+      </div>
+
+      <span class="error server-error" *ngIf="serverError">{{ serverError }}</span>
+
+      <button type="submit" class="btn-primary auth-btn" [disabled]="loading">
+        {{ loading ? 'Creating account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a routerLink="/login">Sign in</a></p>
+  </div>
+</div>

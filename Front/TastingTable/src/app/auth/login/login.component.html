@@ -1,0 +1,36 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <a routerLink="/" class="auth-back">&larr; Back to Home</a>
+    <div class="auth-logo">&#x1F373;</div>
+    <h1>Welcome back</h1>
+    <p class="auth-sub">Sign in to your TastingTable account</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form" novalidate>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email"
+          [class.invalid]="submitted && f['email'].errors" />
+        <span class="error" *ngIf="submitted && f['email'].errors?.['required']">Email is required.</span>
+        <span class="error" *ngIf="submitted && f['email'].errors?.['email']">Enter a valid email address.</span>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password"
+          placeholder="••••••••"
+          [class.invalid]="submitted && f['password'].errors" />
+        <span class="error" *ngIf="submitted && f['password'].errors?.['required']">Password is required.</span>
+        <span class="error" *ngIf="submitted && f['password'].errors?.['minlength']">Password must be at least 6 characters.</span>
+      </div>
+
+      <span class="error server-error" *ngIf="serverError">{{ serverError }}</span>
+
+      <button type="submit" class="btn-primary auth-btn" [disabled]="loading">
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <p class="auth-switch">Don't have an account? <a routerLink="/register">Create one</a></p>
+  </div>
+</div>

@@ -1,20 +1,5 @@
-<app-nav (sidebarToggled)="toggleSidebar()" />
-
-@if (isMobile() && sidebarOpen()) {
-  <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
-}
-
-<div class="layout">
-  <app-sidebar
-    [open]="sidebarOpen()"
-    [mobile]="isMobile()"
-    (toggled)="toggleSidebar()" />
-
-  <main class="main-content">
-    <app-hero />
-    <app-featured-recipe />
-    <app-features />
-    <app-categories />
-    <app-footer />
-  </main>
-</div>
+<app-hero />
+<app-featured-recipe />
+<app-features />
+<app-categories />
+<app-footer />

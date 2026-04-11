@@ -1,6 +1,9 @@
 package com.example.praksa.Config;
 
 import com.example.praksa.Models.*;
+import com.example.praksa.Repositories.postgres.IngredientRepository;
+import com.example.praksa.Repositories.postgres.RecipeCategoryRepository;
+import com.example.praksa.Repositories.postgres.RecipeRepository;
 import com.example.praksa.Repositories.postgres.RoleRepository;
 import com.example.praksa.Repositories.postgres.UserAppRepository;
 import com.example.praksa.Repositories.neo4j.UserNodeRepository;
@@ -10,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 
+import java.time.LocalDateTime;
+
 @Component
 @Slf4j
 public class PostConstructConfig {
@@ -17,12 +22,18 @@ public class PostConstructConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserAppRepository userAppRepository;
     private final UserNodeRepository userNodeRepository;
+    private final IngredientRepository ingredientRepository;
+    private final RecipeCategoryRepository recipeCategoryRepository;
+    private final RecipeRepository recipeRepository;
 
-    public PostConstructConfig(RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserAppRepository userAppRepository, UserNodeRepository userNodeRepository) {
+    public PostConstructConfig(RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserAppRepository userAppRepository, UserNodeRepository userNodeRepository, IngredientRepository ingredientRepository, RecipeCategoryRepository recipeCategoryRepository, RecipeRepository recipeRepository) {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userAppRepository = userAppRepository;
         this.userNodeRepository = userNodeRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.recipeCategoryRepository = recipeCategoryRepository;
+        this.recipeRepository = recipeRepository;
     }
     @PostConstruct
     public void create(){
@@ -46,6 +57,47 @@ public class PostConstructConfig {
             userNodeRepository.save(userNode1);
         }
 
+        Ingredient ingredient1 = new Ingredient("so");
+        Ingredient ingredient2 = new Ingredient("biber");
+        ingredientRepository.save(ingredient1);
+        ingredientRepository.save(ingredient2);
+
+        RecipeCategory recipeCategory1 = new RecipeCategory("Italian","Food originating from Italian cuisine");
+        RecipeCategory recipeCategory2 = new RecipeCategory("Indian","Food originating from Indian cuisine");
+        recipeCategoryRepository.save(recipeCategory1);
+        recipeCategoryRepository.save(recipeCategory2);
+
+        if (recipeRepository.findByName("Spaghetti Bolognese") == null) {
+            Ingredient salt = ingredientRepository.findByName("so");
+            Ingredient pepper = ingredientRepository.findByName("biber");
+            RecipeCategory italian = recipeCategoryRepository.getByName("Italian");
+
+            Recipe spaghettibolognese = new Recipe();
+            spaghettibolognese.setName("Spaghetti Bolognese");
+            spaghettibolognese.setPreparation("Cook spaghetti according to package directions. Brown ground beef in a pan, add tomato sauce, simmer for 20 minutes. Season and serve over pasta.");
+            spaghettibolognese.setServings("4");
+            spaghettibolognese.setRecipeCategory(italian);
+            spaghettibolognese.setCreatedDateTime(LocalDateTime.now());
+            spaghettibolognese.addRecipeIngredient(new RecipeIngredient("1 tsp", salt, spaghettibolognese));
+            spaghettibolognese.addRecipeIngredient(new RecipeIngredient("1/2 tsp", pepper, spaghettibolognese));
+            recipeRepository.save(spaghettibolognese);
+        }
+
+        if (recipeRepository.findByName("Chicken Tikka Masala") == null) {
+            Ingredient salt = ingredientRepository.findByName("so");
+            Ingredient pepper = ingredientRepository.findByName("biber");
+            RecipeCategory indian = recipeCategoryRepository.getByName("Indian");
+
+            Recipe chickenTikkaMasala = new Recipe();
+            chickenTikkaMasala.setName("Chicken Tikka Masala");
+            chickenTikkaMasala.setPreparation("Marinate chicken in yogurt and spices, grill until charred. Simmer in a creamy tomato-based sauce with garlic, ginger, and garam masala. Serve with rice or naan.");
+            chickenTikkaMasala.setServings("4");
+            chickenTikkaMasala.setRecipeCategory(indian);
+            chickenTikkaMasala.setCreatedDateTime(LocalDateTime.now());
+            chickenTikkaMasala.addRecipeIngredient(new RecipeIngredient("1 tsp", salt, chickenTikkaMasala));
+            chickenTikkaMasala.addRecipeIngredient(new RecipeIngredient("1 tsp", pepper, chickenTikkaMasala));
+            recipeRepository.save(chickenTikkaMasala);
+        }
 
     }
 }

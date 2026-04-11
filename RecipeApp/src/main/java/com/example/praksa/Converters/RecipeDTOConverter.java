@@ -27,7 +27,7 @@ public class RecipeDTOConverter {
                 .ingredientList(recipe.getRecipeIngredients().stream().map(converter::recipeIngredientToDTO).collect(Collectors.toList()))
                 .servings(recipe.getServings())
                 .preparation(recipe.getPreparation())
-                .imageName(imageService.getImageName(recipe.getImage().getId()))
+                .imageName(recipe.getImage() != null ? imageService.getImageName(recipe.getImage().getId()) : null)
                 .createdDateTime(recipe.getCreatedDateTime().toString())
                 .build();
     }

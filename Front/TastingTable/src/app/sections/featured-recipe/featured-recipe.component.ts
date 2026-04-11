@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { RecipeService, RecipeResponse } from '../../services/recipe.service';
+import { AuthService } from '../../services/auth.service';
 import { LoginModalComponent } from '../../shared/login-modal/login-modal.component';
 
 @Component({
@@ -12,6 +14,8 @@ import { LoginModalComponent } from '../../shared/login-modal/login-modal.compon
 })
 export class FeaturedRecipeComponent implements OnInit {
   private recipeService = inject(RecipeService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   recipe = signal<RecipeResponse | null>(null);
   loading = signal(true);
@@ -27,11 +31,26 @@ export class FeaturedRecipeComponent implements OnInit {
     });
   }
 
-  openModal(): void {
-    this.showModal.set(true);
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  viewAll(): void {
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/recipes']);
+    } else {
+      this.showModal.set(true);
+    }
   }
 
   closeModal(): void {
     this.showModal.set(false);
+  }
+
+  onImgError(event: Event): void {
+    const el = event.target as HTMLImageElement;
+    el.style.display = 'none';
+    const placeholder = el.nextElementSibling as HTMLElement;
+    if (placeholder) placeholder.style.display = 'flex';
   }
 }

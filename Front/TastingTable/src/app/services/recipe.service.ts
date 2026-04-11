@@ -1,19 +1,22 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface RecipeResponse {
-  id: number;
   name: string;
-  description?: string;
-  categoryName?: string;
+  servings?: string;
+  preparation?: string;
+  recipeCategoryName?: string;
+  recipeCategoryDescription?: string;
+  ingredientList?: { ingredientName: string; amount: string }[];
+  imageName?: string;
   imageId?: number;
-  createdAt?: string;
+  createdDateTime?: string;
 }
 
 export interface RecipeCategory {
-  id: number;
   name: string;
+  description?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -25,8 +28,20 @@ export class RecipeService {
     return this.http.get<RecipeResponse[]>(`${this.baseUrl}/recipe/getAll`);
   }
 
+  getByCategory(categoryName: string): Observable<RecipeResponse[]> {
+    return this.http.get<RecipeResponse[]>(
+      `${this.baseUrl}/recipe/filter/category`, { params: { categoryName } }
+    );
+  }
+
   getCategories(): Observable<RecipeCategory[]> {
-    return this.http.get<RecipeCategory[]>(`${this.baseUrl}/category/getAll`);
+    return this.http.get<{ recipeCategoryDTOList: RecipeCategory[] }>(
+      `${this.baseUrl}/category/getAll`
+    ).pipe(map(r => r.recipeCategoryDTOList ?? []));
+  }
+
+  createRecipe(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/recipe`, formData);
   }
 
   getImage(imageId: number): string {

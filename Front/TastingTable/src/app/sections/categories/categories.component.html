@@ -12,11 +12,10 @@
     </div>
   } @else if (categories().length > 0) {
     <div class="categories-grid">
-      @for (cat of categories(); track cat.id) {
-        <button class="category-chip" (click)="openModal(cat.name)">
+      @for (cat of categories(); track cat.name) {
+        <button class="category-chip" (click)="onCategoryClick(cat.name)">
           <span class="category-icon">&#x1F37D;&#xFE0F;</span>
           <span class="category-name">{{ cat.name }}</span>
-          <span class="category-lock">&#x1F512;</span>
         </button>
       }
     </div>
@@ -26,7 +25,7 @@
 
   <div class="categories-cta">
     <p>Want to explore all recipes by category?</p>
-    <button class="btn-primary" (click)="openModal('all categories')">Login to Browse All &rarr;</button>
+    <button class="btn-primary" (click)="onBrowseAll()">Browse All Recipes &rarr;</button>
   </div>
 </section>
 

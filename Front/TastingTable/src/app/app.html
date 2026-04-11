@@ -1,1 +1,20 @@
-<router-outlet />
+@if (showShell()) {
+  <app-nav (sidebarToggled)="toggleSidebar()" />
+
+  @if (isMobile() && sidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="toggleSidebar()"></div>
+  }
+
+  <div class="layout">
+    <app-sidebar
+      [open]="sidebarOpen()"
+      [mobile]="isMobile()"
+      (toggled)="toggleSidebar()" />
+
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </div>
+} @else {
+  <router-outlet />
+}

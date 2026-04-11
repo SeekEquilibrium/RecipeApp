@@ -1,0 +1,143 @@
+<div class="recipes-page">
+
+  <!-- Header -->
+  <div class="recipes-header">
+    <div>
+      <h1 class="recipes-title">Recipes</h1>
+      <p class="recipes-sub">Explore our collection of delicious recipes</p>
+    </div>
+    @if (auth.isLoggedIn()) {
+      <button class="btn-primary" (click)="addRecipe()">+ Add Recipe</button>
+    }
+  </div>
+
+  <!-- Search -->
+  <div class="recipes-search-wrap">
+    <input
+      class="recipes-search"
+      type="text"
+      placeholder="Search recipes..."
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)" />
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="category-tabs">
+    <button
+      class="category-tab"
+      [class.active]="activeCategory() === 'All'"
+      (click)="setCategory('All')">All</button>
+    @for (cat of categories(); track cat.name) {
+      <button
+        class="category-tab"
+        [class.active]="activeCategory() === cat.name"
+        (click)="setCategory(cat.name)">{{ cat.name }}</button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="recipes-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="recipe-skeleton">
+          <div class="skeleton-img"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line skeleton-line--wide"></div>
+            <div class="skeleton-line"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (filteredRecipes().length === 0) {
+    <div class="recipes-empty">
+      <span>&#x1F50D;</span>
+      <p>No recipes found.</p>
+    </div>
+  } @else {
+    <div class="recipes-grid">
+      @for (recipe of filteredRecipes(); track recipe.name) {
+        <div class="recipe-card" (click)="openDetail(recipe)">
+          <div class="recipe-img-wrap">
+            @if (hasImage(recipe)) {
+              <img
+                [src]="imageUrl(recipe)"
+                [alt]="recipe.name"
+                class="recipe-img"
+                (error)="onImgError($event)" />
+            }
+            <div class="recipe-img-placeholder" [style.display]="hasImage(recipe) ? 'none' : 'flex'">
+              &#x1F37D;&#xFE0F;
+            </div>
+          </div>
+
+          <div class="recipe-body">
+            @if (recipe.recipeCategoryName) {
+              <span class="recipe-category">{{ recipe.recipeCategoryName }}</span>
+            }
+            <h3 class="recipe-name">{{ recipe.name }}</h3>
+            @if (recipe.servings) {
+              <span class="recipe-servings">&#x1F37D; {{ recipe.servings }} servings</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
+
+<!-- Detail Modal -->
+@if (selectedRecipe()) {
+  <div class="modal-backdrop" (click)="closeDetail()">
+    <div class="detail-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeDetail()">&#x2715;</button>
+
+      <div class="detail-img-wrap">
+        @if (hasImage(selectedRecipe()!)) {
+          <img
+            [src]="imageUrl(selectedRecipe()!)"
+            [alt]="selectedRecipe()!.name"
+            class="detail-img"
+            (error)="onImgError($event)" />
+        }
+        <div class="detail-img-placeholder" [style.display]="hasImage(selectedRecipe()!) ? 'none' : 'flex'">
+          &#x1F37D;&#xFE0F;
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-meta">
+          @if (selectedRecipe()!.recipeCategoryName) {
+            <span class="recipe-category">{{ selectedRecipe()!.recipeCategoryName }}</span>
+          }
+          @if (selectedRecipe()!.servings) {
+            <span class="recipe-servings">&#x1F37D; {{ selectedRecipe()!.servings }} servings</span>
+          }
+          @if (selectedRecipe()!.createdDateTime) {
+            <span class="recipe-date">{{ selectedRecipe()!.createdDateTime }}</span>
+          }
+        </div>
+
+        <h2 class="detail-title">{{ selectedRecipe()!.name }}</h2>
+
+        @if (selectedRecipe()!.ingredientList && selectedRecipe()!.ingredientList!.length > 0) {
+          <div class="detail-section">
+            <h4>Ingredients</h4>
+            <ul class="ingredient-list">
+              @for (ing of selectedRecipe()!.ingredientList!; track ing.ingredientName) {
+                <li><span class="ing-amount">{{ ing.amount }}</span> {{ ing.ingredientName }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (selectedRecipe()!.preparation) {
+          <div class="detail-section">
+            <h4>Preparation</h4>
+            <p class="preparation-text">{{ selectedRecipe()!.preparation }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

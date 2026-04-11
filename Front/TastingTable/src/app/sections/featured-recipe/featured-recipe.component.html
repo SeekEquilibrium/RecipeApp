@@ -4,7 +4,7 @@
       <h2 class="section-title">Featured Recipe</h2>
       <p class="section-subtitle">A taste of what's waiting for you inside</p>
     </div>
-    <button class="btn-primary" (click)="openModal()">View All Recipes &rarr;</button>
+    <button class="btn-primary" (click)="viewAll()">View All Recipes &rarr;</button>
   </div>
 
   @if (loading()) {
@@ -22,28 +22,29 @@
         @if (recipe()!.imageId) {
           <img [src]="'http://localhost:8080/image/getImage?imageId=' + recipe()!.imageId"
                [alt]="recipe()!.name"
-               class="featured-img" />
-        } @else {
-          <div class="featured-img-placeholder">&#x1F37D;&#xFE0F;</div>
+               class="featured-img"
+               (error)="onImgError($event)" />
         }
+        <div class="featured-img-placeholder" [style.display]="recipe()!.imageId ? 'none' : 'flex'">
+          &#x1F37D;&#xFE0F;
+        </div>
         <span class="featured-badge">&#x2B50; Featured</span>
       </div>
 
       <div class="featured-body">
-        @if (recipe()!.categoryName) {
-          <span class="featured-category">{{ recipe()!.categoryName }}</span>
+        @if (recipe()!.recipeCategoryName) {
+          <span class="featured-category">{{ recipe()!.recipeCategoryName }}</span>
         }
         <h3 class="featured-title">{{ recipe()!.name }}</h3>
-        @if (recipe()!.description) {
-          <p class="featured-desc">{{ recipe()!.description }}</p>
+
+        @if (!isLoggedIn()) {
+          <div class="featured-locked" (click)="viewAll()">
+            <span class="lock-icon">&#x1F512;</span>
+            <span>Login to see full recipe details</span>
+          </div>
         }
 
-        <div class="featured-locked" (click)="openModal()">
-          <span class="lock-icon">&#x1F512;</span>
-          <span>Login to see full recipe details</span>
-        </div>
-
-        <button class="btn-primary featured-cta" (click)="openModal()">
+        <button class="btn-primary featured-cta" (click)="viewAll()">
           View All Recipes &rarr;
         </button>
       </div>

@@ -1,0 +1,119 @@
+<div class="add-recipe-page">
+
+  <div class="page-header">
+    <a routerLink="/recipes" class="back-link">&larr; Back to Recipes</a>
+    <h1>Add New Recipe</h1>
+    <p class="page-sub">Share your recipe with the TastingTable community</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="recipe-form">
+
+    <!-- Basic Info -->
+    <section class="form-section">
+      <h3 class="section-heading">Basic Info</h3>
+
+      <div class="field">
+        <label for="name">Recipe Name <span class="req">*</span></label>
+        <input id="name" type="text" formControlName="name" placeholder="e.g. Spaghetti Carbonara"
+          [class.invalid]="fieldInvalid(f['name'])" />
+        <span class="error" *ngIf="fieldInvalid(f['name']) && f['name'].errors?.['required']">Name is required.</span>
+        <span class="error" *ngIf="fieldInvalid(f['name']) && f['name'].errors?.['minlength']">Minimum 3 characters.</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="recipeCategory">Category <span class="req">*</span></label>
+          <select id="recipeCategory" formControlName="recipeCategory"
+            [class.invalid]="fieldInvalid(f['recipeCategory'])">
+            <option value="" disabled>Select a category...</option>
+            @for (cat of categories; track cat.name) {
+              <option [value]="cat.name">{{ cat.name }}</option>
+            }
+          </select>
+          <span class="error" *ngIf="fieldInvalid(f['recipeCategory'])">Category is required.</span>
+        </div>
+
+        <div class="field">
+          <label for="servings">Servings <span class="req">*</span></label>
+          <input id="servings" type="text" formControlName="servings" placeholder="e.g. 4 people"
+            [class.invalid]="fieldInvalid(f['servings'])" />
+          <span class="error" *ngIf="fieldInvalid(f['servings'])">Servings is required.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image -->
+    <section class="form-section">
+      <h3 class="section-heading">Photo</h3>
+
+      @if (imagePreview) {
+        <div class="image-preview-wrap">
+          <img [src]="imagePreview" alt="Preview" class="image-preview" />
+          <button type="button" class="remove-image" (click)="clearImage()">&#x2715; Remove</button>
+        </div>
+      } @else {
+        <label class="image-upload-label" for="imageInput">
+          <span class="upload-icon">&#x1F4F7;</span>
+          <span>Click to upload a photo</span>
+          <span class="upload-hint">PNG, JPG up to 5MB</span>
+        </label>
+      }
+      <input id="imageInput" type="file" accept="image/*" class="image-input-hidden"
+        (change)="onImageChange($event)" />
+    </section>
+
+    <!-- Ingredients -->
+    <section class="form-section">
+      <h3 class="section-heading">Ingredients <span class="req">*</span></h3>
+
+      <div formArrayName="ingredients" class="ingredients-list">
+        @for (ing of ingredients.controls; track $index) {
+          <div [formGroupName]="$index" class="ingredient-row">
+            <div class="field">
+              <input type="text" formControlName="ingredientName" placeholder="Ingredient name"
+                [class.invalid]="fieldInvalid(ing.get('ingredientName'))" />
+              <span class="error" *ngIf="fieldInvalid(ing.get('ingredientName'))">Required.</span>
+            </div>
+            <div class="field field--amount">
+              <input type="text" formControlName="amount" placeholder="Amount (e.g. 200g)"
+                [class.invalid]="fieldInvalid(ing.get('amount'))" />
+              <span class="error" *ngIf="fieldInvalid(ing.get('amount'))">Required.</span>
+            </div>
+            <button type="button" class="remove-btn"
+              [disabled]="ingredients.length === 1"
+              (click)="removeIngredient($index)">&#x2715;</button>
+          </div>
+        }
+      </div>
+
+      <button type="button" class="btn-outline add-ingredient-btn" (click)="addIngredient()">
+        + Add Ingredient
+      </button>
+    </section>
+
+    <!-- Preparation -->
+    <section class="form-section">
+      <h3 class="section-heading">Preparation <span class="req">*</span></h3>
+
+      <div class="field">
+        <textarea id="preparation" formControlName="preparation"
+          placeholder="Describe the steps to prepare this recipe..."
+          rows="8"
+          [class.invalid]="fieldInvalid(f['preparation'])"></textarea>
+        <span class="error" *ngIf="fieldInvalid(f['preparation']) && f['preparation'].errors?.['required']">Preparation is required.</span>
+        <span class="error" *ngIf="fieldInvalid(f['preparation']) && f['preparation'].errors?.['minlength']">Minimum 10 characters.</span>
+      </div>
+    </section>
+
+    <!-- Submit -->
+    <span class="error server-error" *ngIf="serverError">{{ serverError }}</span>
+
+    <div class="form-actions">
+      <a routerLink="/recipes" class="btn-outline">Cancel</a>
+      <button type="submit" class="btn-primary" [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save Recipe' }}
+      </button>
+    </div>
+
+  </form>
+</div>

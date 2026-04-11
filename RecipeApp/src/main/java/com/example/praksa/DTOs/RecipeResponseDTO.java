@@ -16,6 +16,7 @@ public class RecipeResponseDTO {
     private String recipeCategoryName;
     private String recipeCategoryDescription;
     private List<RecipeIngredientRequestDTO> ingredientList;
+    private Long imageId;
     private String imageName;
     private String createdDateTime;
 }

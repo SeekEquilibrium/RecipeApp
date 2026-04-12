@@ -2,6 +2,8 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RecipeService, RecipeResponse, RecipeCategory } from '../services/recipe.service';
 import { AuthService } from '../services/auth.service';
 
@@ -28,7 +30,12 @@ export class RecipesComponent implements OnInit {
   favouriteNames = signal(new Set<string>());
   pendingNames = signal(new Set<string>());
 
+  searchMode = signal<'name' | 'ingredient'>('name');
+  ingredientTerm = signal('');
+  private ingredientSearch$ = new Subject<string>();
+
   filteredRecipes = computed(() => {
+    if (this.searchMode() === 'ingredient') return this.allRecipes();
     const term = this.searchTerm().toLowerCase();
     return this.allRecipes().filter(r =>
       (!term || r.name.toLowerCase().includes(term))
@@ -36,6 +43,11 @@ export class RecipesComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.ingredientSearch$.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => this.doIngredientSearch(term));
+
     this.recipeService.getCategories().subscribe({
       next: cats => this.categories.set(cats),
       error: () => {}
@@ -55,6 +67,37 @@ export class RecipesComponent implements OnInit {
     } else {
       this.loadAll();
     }
+  }
+
+  setSearchMode(mode: 'name' | 'ingredient'): void {
+    if (this.searchMode() === mode) return;
+    this.searchMode.set(mode);
+    this.searchTerm.set('');
+    this.ingredientTerm.set('');
+    if (mode === 'name') {
+      const cat = this.activeCategory();
+      cat === 'All' ? this.loadAll() : this.loadByCategory(cat);
+    } else {
+      this.activeCategory.set('All');
+      this.loadAll();
+    }
+  }
+
+  onIngredientInput(term: string): void {
+    this.ingredientTerm.set(term);
+    this.ingredientSearch$.next(term);
+  }
+
+  private doIngredientSearch(term: string): void {
+    if (!term.trim()) {
+      this.loadAll();
+      return;
+    }
+    this.loading.set(true);
+    this.recipeService.getByIngredient(term).subscribe({
+      next: recipes => { this.allRecipes.set(recipes); this.loading.set(false); },
+      error: () => { this.allRecipes.set([]); this.loading.set(false); }
+    });
   }
 
   private loadAll(): void {

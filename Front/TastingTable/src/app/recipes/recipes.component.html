@@ -11,29 +11,50 @@
     }
   </div>
 
-  <!-- Search -->
-  <div class="recipes-search-wrap">
-    <input
-      class="recipes-search"
-      type="text"
-      placeholder="Search recipes..."
-      [ngModel]="searchTerm()"
-      (ngModelChange)="searchTerm.set($event)" />
+  <!-- Search Mode Toggle -->
+  <div class="search-mode-toggle">
+    <button class="search-mode-btn"
+      [class.active]="searchMode() === 'name'"
+      (click)="setSearchMode('name')">By Name</button>
+    <button class="search-mode-btn"
+      [class.active]="searchMode() === 'ingredient'"
+      (click)="setSearchMode('ingredient')">By Ingredient</button>
   </div>
 
-  <!-- Category Tabs -->
-  <div class="category-tabs">
-    <button
-      class="category-tab"
-      [class.active]="activeCategory() === 'All'"
-      (click)="setCategory('All')">All</button>
-    @for (cat of categories(); track cat.name) {
-      <button
-        class="category-tab"
-        [class.active]="activeCategory() === cat.name"
-        (click)="setCategory(cat.name)">{{ cat.name }}</button>
+  <!-- Search -->
+  <div class="recipes-search-wrap">
+    @if (searchMode() === 'name') {
+      <input
+        class="recipes-search"
+        type="text"
+        placeholder="Search recipes..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)" />
+    } @else {
+      <input
+        class="recipes-search"
+        type="text"
+        placeholder="Search by ingredient..."
+        [ngModel]="ingredientTerm()"
+        (ngModelChange)="onIngredientInput($event)" />
     }
   </div>
+
+  <!-- Category Tabs (name mode only) -->
+  @if (searchMode() === 'name') {
+    <div class="category-tabs">
+      <button
+        class="category-tab"
+        [class.active]="activeCategory() === 'All'"
+        (click)="setCategory('All')">All</button>
+      @for (cat of categories(); track cat.name) {
+        <button
+          class="category-tab"
+          [class.active]="activeCategory() === cat.name"
+          (click)="setCategory(cat.name)">{{ cat.name }}</button>
+      }
+    </div>
+  }
 
   <!-- Loading -->
   @if (loading()) {

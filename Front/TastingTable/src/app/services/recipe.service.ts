@@ -71,4 +71,8 @@ export class RecipeService {
   removeFavouriteCategory(categoryName: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/category/favourite/delete`, { params: { categoryName } });
   }
+
+  getByIngredient(ingredientName: string): Observable<RecipeResponse[]> {
+    return this.http.get<RecipeResponse[]>(`${this.baseUrl}/recipe/filter/ingredient`, { params: { ingredientName } });
+  }
 }

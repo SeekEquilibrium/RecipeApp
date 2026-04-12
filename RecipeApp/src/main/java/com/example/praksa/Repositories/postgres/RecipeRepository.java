@@ -22,6 +22,9 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @Query("SELECT rec from Recipe rec join fetch rec.recipeIngredients recIng where recIng.ingredient.name=:ingredientName")
     List<Recipe> findAllWithIngredient(String ingredientName);
 
+    @Query("SELECT DISTINCT rec FROM Recipe rec JOIN rec.recipeIngredients recIng WHERE LOWER(recIng.ingredient.name) LIKE LOWER(CONCAT('%', :ingredientName, '%'))")
+    List<Recipe> findAllWithIngredientContaining(String ingredientName);
+
     @Query("SELECT rec.recipeCategory.name as categoryName , count(rec) as count from Recipe rec group by rec.recipeCategory.name")
     List<CountCategoryProjection> countCategoryAll();
 

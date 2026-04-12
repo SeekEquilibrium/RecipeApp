@@ -88,7 +88,7 @@ public class RecipeController {
 
     @GetMapping(value = "/filter/ingredient")
     @Operation(summary = "Search for all the recipes with the given ingredient",method = "GET")
-    public ResponseEntity<?> searchIngredient(@RequestParam String ingredientName) throws Exception{
+    public ResponseEntity<?> searchIngredient(@RequestParam String ingredientName) {
             List<RecipeResponseDTO> responseDTOS = recipeService.searchIngredient(ingredientName);
             return ResponseEntity.ok(responseDTOS);
     }

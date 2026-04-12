@@ -117,13 +117,8 @@ public class RecipeService {
     }
 
     @Transactional
-    public List<RecipeResponseDTO> searchIngredient(String ingredientName) throws Exception {
-        Ingredient ingredient = ingredientRepository.findByName(ingredientName);
-        if(ingredient == null){
-            log.error("Ingredient not found");
-            throw  new Exception("Ingredient not found");
-        }
-        List<Recipe> recipes = recipeRepository.findAllWithIngredient(ingredientName);
+    public List<RecipeResponseDTO> searchIngredient(String ingredientName) {
+        List<Recipe> recipes = recipeRepository.findAllWithIngredientContaining(ingredientName);
         return recipes.stream().map(converter::recipeToDTO).toList();
     }
 

@@ -87,6 +87,14 @@
   color: var(--color-primary);
   background: var(--color-surface-warm);
 }
+.sidebar-link--admin {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.sidebar-link--admin:hover {
+  color: var(--color-accent);
+  background: rgba(74, 124, 89, 0.1);
+}
 
 .sidebar-icon {
   font-size: 1.1rem;

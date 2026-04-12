@@ -56,10 +56,12 @@ public class RecipeCategoryController {
     }
 
     @DeleteMapping
-    @Operation(summary = "Deletes recipeCategory with the given id")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> delete(@RequestParam Long id) throws Exception{
-        recipeCategoryService.deleteRecipeCategory(id);
+    @Operation(summary = "Deletes recipeCategory with the given name")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> delete(@RequestParam String categoryName) throws Exception {
+        RecipeCategory category = recipeCategoryRepository.getByName(categoryName);
+        if (category == null) return ResponseEntity.notFound().build();
+        recipeCategoryService.deleteRecipeCategory(category.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

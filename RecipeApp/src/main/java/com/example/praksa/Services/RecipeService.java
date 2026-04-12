@@ -105,6 +105,15 @@ public class RecipeService {
         });
         recipeRepository.delete(recipe);
     }
+
+    public void deleteByName(String recipeName) throws Exception {
+        Recipe recipe = recipeRepository.findByName(recipeName);
+        if (recipe == null) {
+            log.error("Recipe not found");
+            throw new Exception("Recipe not found");
+        }
+        recipeRepository.delete(recipe);
+    }
     @Transactional
     public List<RecipeResponseDTO> searchCategory(String categoryName) throws Exception {
         RecipeCategory recipeCategory = recipeCategoryRepository.findByName(categoryName).orElseThrow(() -> {

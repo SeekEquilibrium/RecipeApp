@@ -17,6 +17,9 @@
     <ng-container *ngIf="auth.isLoggedIn()">
       <a routerLink="/my-kitchen" class="nav-link">My Kitchen</a>
     </ng-container>
+    <ng-container *ngIf="auth.isAdmin()">
+      <a routerLink="/admin" class="nav-link nav-link--admin">Admin</a>
+    </ng-container>
   </div>
 
   <div class="nav-right">

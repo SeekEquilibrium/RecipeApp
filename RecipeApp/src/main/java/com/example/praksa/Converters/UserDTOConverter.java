@@ -43,6 +43,7 @@ public class UserDTOConverter {
                 .country(userApp.getAdress().getCountry())
                 .city(userApp.getAdress().getCity())
                 .gender(userApp.getGender().toString())
+                .role(userApp.getRole().getName())
                 .build();
     }
 

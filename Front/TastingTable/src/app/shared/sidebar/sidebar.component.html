@@ -25,6 +25,12 @@
         <span class="sidebar-label">My Kitchen</span>
       </a>
     }
+    @if (auth.isAdmin()) {
+      <a routerLink="/admin" class="sidebar-link sidebar-link--admin">
+        <span class="sidebar-icon">&#x2699;&#xFE0F;</span>
+        <span class="sidebar-label">Admin</span>
+      </a>
+    }
   </nav>
 
 </aside>

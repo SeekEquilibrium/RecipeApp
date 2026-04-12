@@ -46,4 +46,13 @@ public class IngredientService {
         });
         ingredientRepository.delete(ingredient);
     }
+
+    public void deleteIngredientByName(String name) throws Exception {
+        Ingredient ingredient = ingredientRepository.findByName(name);
+        if (ingredient == null) {
+            log.error("Ingredient not found");
+            throw new Exception("Ingredient not found");
+        }
+        ingredientRepository.delete(ingredient);
+    }
 }

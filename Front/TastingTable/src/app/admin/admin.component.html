@@ -1,0 +1,155 @@
+<div class="admin-page">
+
+  <!-- Header -->
+  <div class="admin-header">
+    <h1 class="admin-title">Admin Panel</h1>
+    <p class="admin-sub">Manage recipes, categories, ingredients and view analytics</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="admin-tabs">
+    <button class="admin-tab" [class.active]="activeTab() === 'analytics'" (click)="setTab('analytics')">
+      &#x1F4CA; Analytics
+    </button>
+    <button class="admin-tab" [class.active]="activeTab() === 'categories'" (click)="setTab('categories')">
+      &#x1F3F7;&#xFE0F; Categories
+    </button>
+    <button class="admin-tab" [class.active]="activeTab() === 'ingredients'" (click)="setTab('ingredients')">
+      &#x1F33F; Ingredients
+    </button>
+  </div>
+
+  <!-- ── Analytics Tab ──────────────────────────────────────────── -->
+  @if (activeTab() === 'analytics') {
+    <div class="admin-section">
+      <h2 class="section-heading">Recipes per Category</h2>
+      @if (loadingStats()) {
+        <p class="loading-text">Loading...</p>
+      } @else if (categoryStats().length === 0) {
+        <p class="empty-text">No data available.</p>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr><th>Category</th><th>Recipe Count</th></tr>
+          </thead>
+          <tbody>
+            @for (stat of categoryStats(); track stat.categoryName) {
+              <tr>
+                <td>{{ stat.categoryName }}</td>
+                <td>{{ stat.count }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+
+    <div class="admin-section">
+      <h2 class="section-heading">Recipes by Date</h2>
+      <div class="date-search-row">
+        <input
+          class="admin-input"
+          type="date"
+          [ngModel]="selectedDate()"
+          (ngModelChange)="selectedDate.set($event)" />
+        <button class="btn-primary-sm" (click)="searchByDate()" [disabled]="!selectedDate()">Search</button>
+      </div>
+      @if (loadingDate()) {
+        <p class="loading-text">Loading...</p>
+      } @else if (dateCount() !== null) {
+        <p class="date-count">
+          <strong>{{ dateCount() }}</strong> recipe{{ dateCount() === 1 ? '' : 's' }} created on {{ selectedDate() }}
+        </p>
+        @if (dateRecipes().length > 0) {
+          <ul class="date-recipe-list">
+            @for (r of dateRecipes(); track r.name) {
+              <li>{{ r.name }} <span class="recipe-cat-badge">{{ r.recipeCategoryName }}</span></li>
+            }
+          </ul>
+        }
+      }
+    </div>
+  }
+
+  <!-- ── Categories Tab ─────────────────────────────────────────── -->
+  @if (activeTab() === 'categories') {
+    <div class="admin-section">
+      <h2 class="section-heading">Add Category</h2>
+      <div class="add-row">
+        <input class="admin-input" type="text" placeholder="Category name"
+          [ngModel]="newCategoryName()" (ngModelChange)="newCategoryName.set($event)" />
+        <input class="admin-input" type="text" placeholder="Description (optional)"
+          [ngModel]="newCategoryDesc()" (ngModelChange)="newCategoryDesc.set($event)" />
+        <button class="btn-primary-sm" (click)="addCategory()" [disabled]="!newCategoryName().trim()">Add</button>
+      </div>
+      @if (categoryError()) {
+        <p class="error-text">{{ categoryError() }}</p>
+      }
+    </div>
+
+    <div class="admin-section">
+      <h2 class="section-heading">All Categories</h2>
+      @if (loadingCategories()) {
+        <p class="loading-text">Loading...</p>
+      } @else if (categories().length === 0) {
+        <p class="empty-text">No categories found.</p>
+      } @else {
+        <table class="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Description</th><th></th></tr>
+          </thead>
+          <tbody>
+            @for (cat of categories(); track cat.name) {
+              <tr>
+                <td><strong>{{ cat.name }}</strong></td>
+                <td class="muted">{{ cat.description || '—' }}</td>
+                <td>
+                  <button class="btn-delete"
+                    [disabled]="pendingCategoryNames().has(cat.name)"
+                    (click)="deleteCategory(cat.name)">Delete</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+
+  <!-- ── Ingredients Tab ────────────────────────────────────────── -->
+  @if (activeTab() === 'ingredients') {
+    <div class="admin-section">
+      <h2 class="section-heading">Add Ingredient</h2>
+      <div class="add-row">
+        <input class="admin-input" type="text" placeholder="Ingredient name"
+          [ngModel]="newIngredientName()" (ngModelChange)="newIngredientName.set($event)"
+          (keydown.enter)="addIngredient()" />
+        <button class="btn-primary-sm" (click)="addIngredient()" [disabled]="!newIngredientName().trim()">Add</button>
+      </div>
+      @if (ingredientError()) {
+        <p class="error-text">{{ ingredientError() }}</p>
+      }
+    </div>
+
+    <div class="admin-section">
+      <h2 class="section-heading">All Ingredients</h2>
+      @if (loadingIngredients()) {
+        <p class="loading-text">Loading...</p>
+      } @else if (ingredients().length === 0) {
+        <p class="empty-text">No ingredients found.</p>
+      } @else {
+        <div class="ingredient-list">
+          @for (ing of ingredients(); track ing.name) {
+            <div class="ingredient-row">
+              <span>{{ ing.name }}</span>
+              <button class="btn-delete"
+                [disabled]="pendingIngredientNames().has(ing.name)"
+                (click)="deleteIngredient(ing.name)">Delete</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

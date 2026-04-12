@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
@@ -12,6 +12,7 @@ export interface UserDTO {
   street: string;
   city: string;
   country: string;
+  role?: string;
 }
 
 export interface RegisterDTO {
@@ -34,6 +35,7 @@ export class AuthService {
 
   isLoggedIn = signal(false);
   currentUser = signal<UserDTO | null>(null);
+  isAdmin = computed(() => this.currentUser()?.role === 'ROLE_ADMIN');
 
   constructor() {
     this.loadCurrentUser();

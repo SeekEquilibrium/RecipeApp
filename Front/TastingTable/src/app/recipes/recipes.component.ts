@@ -34,6 +34,9 @@ export class RecipesComponent implements OnInit {
   ingredientTerm = signal('');
   private ingredientSearch$ = new Subject<string>();
 
+  deleteConfirm = signal(false);
+  deletingRecipe = signal(false);
+
   filteredRecipes = computed(() => {
     if (this.searchMode() === 'ingredient') return this.allRecipes();
     const term = this.searchTerm().toLowerCase();
@@ -136,6 +139,20 @@ export class RecipesComponent implements OnInit {
 
   closeDetail(): void {
     this.selectedRecipe.set(null);
+    this.deleteConfirm.set(false);
+  }
+
+  deleteRecipe(recipe: RecipeResponse): void {
+    if (this.deletingRecipe()) return;
+    this.deletingRecipe.set(true);
+    this.recipeService.deleteRecipeByName(recipe.name).subscribe({
+      next: () => {
+        this.allRecipes.update(list => list.filter(r => r.name !== recipe.name));
+        this.closeDetail();
+        this.deletingRecipe.set(false);
+      },
+      error: () => this.deletingRecipe.set(false)
+    });
   }
 
   hasImage(recipe: RecipeResponse): boolean {

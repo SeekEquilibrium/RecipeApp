@@ -28,7 +28,7 @@ public class RecipeController {
         this.favouriteRecipeService = favouriteRecipeService;
 
     }
-
+    
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @Operation(summary = "Create a new recipe",method = "POST")
@@ -50,6 +50,14 @@ public class RecipeController {
     @Operation(summary = "Deletes a recipe with the given id")
     public ResponseEntity<?> delete(@RequestParam Long id) throws Exception{
         recipeService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/byName")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Deletes a recipe with the given name", method = "DELETE")
+    public ResponseEntity<?> deleteByName(@RequestParam String recipeName) throws Exception {
+        recipeService.deleteByName(recipeName);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

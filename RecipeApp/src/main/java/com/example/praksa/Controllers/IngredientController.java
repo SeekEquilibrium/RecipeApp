@@ -25,7 +25,7 @@ public class IngredientController {
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Create a new ingredient",method = "POST")
-    public ResponseEntity<Ingredient> addIngredient(String requestIngredient) throws Exception {
+    public ResponseEntity<Ingredient> addIngredient(@RequestParam String requestIngredient) throws Exception {
         Ingredient ingredient = ingredientService.create(requestIngredient);
         return new ResponseEntity<>(ingredient, HttpStatus.CREATED);
     }
@@ -39,9 +39,9 @@ public class IngredientController {
 
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @Operation(summary = "Deletes an ingredient with the given id",method = "DELETE")
-    public ResponseEntity<?> deleteIngredient(@PathVariable Long id) throws Exception {
-        ingredientService.deleteIngredient(id);
+    @Operation(summary = "Deletes an ingredient with the given name",method = "DELETE")
+    public ResponseEntity<?> deleteIngredient(@RequestParam String ingredientName) throws Exception {
+        ingredientService.deleteIngredientByName(ingredientName);
         return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

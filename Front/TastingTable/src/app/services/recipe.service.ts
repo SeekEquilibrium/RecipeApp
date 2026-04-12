@@ -75,4 +75,44 @@ export class RecipeService {
   getByIngredient(ingredientName: string): Observable<RecipeResponse[]> {
     return this.http.get<RecipeResponse[]>(`${this.baseUrl}/recipe/filter/ingredient`, { params: { ingredientName } });
   }
+
+  // ── Admin: recipes ────────────────────────────────────────────────
+  deleteRecipeByName(recipeName: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/recipe/byName`, { params: { recipeName } });
+  }
+
+  // ── Admin: categories ─────────────────────────────────────────────
+  createCategory(name: string, description: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/category`, { name, description });
+  }
+
+  deleteCategoryByName(categoryName: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/category`, { params: { categoryName } });
+  }
+
+  // ── Admin: ingredients ────────────────────────────────────────────
+  getIngredients(): Observable<{ name: string }[]> {
+    return this.http.get<{ name: string }[]>(`${this.baseUrl}/ingredient/getAll`);
+  }
+
+  createIngredient(requestIngredient: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ingredient`, null, { params: { requestIngredient } });
+  }
+
+  deleteIngredient(ingredientName: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/ingredient`, { params: { ingredientName } });
+  }
+
+  // ── Admin: analytics ──────────────────────────────────────────────
+  countAllCategories(): Observable<{ categoryName: string; count: number }[]> {
+    return this.http.get<{ categoryName: string; count: number }[]>(`${this.baseUrl}/admin/countAllCategories`);
+  }
+
+  countRecipesByDate(date: string): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/admin/countSpecificDate`, { params: { date } });
+  }
+
+  getRecipesByDate(date: string): Observable<RecipeResponse[]> {
+    return this.http.get<RecipeResponse[]>(`${this.baseUrl}/admin/retriveSpecificDate`, { params: { date } });
+  }
 }

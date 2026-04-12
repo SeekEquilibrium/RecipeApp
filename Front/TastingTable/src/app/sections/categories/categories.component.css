@@ -24,13 +24,14 @@
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 0.75rem 0.5rem 1.25rem;
   font-size: 0.92rem;
   font-weight: 500;
   color: var(--color-text);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
   box-shadow: var(--shadow-sm);
+  user-select: none;
 }
 .category-chip:hover {
   background: var(--color-surface-warm);
@@ -41,6 +42,29 @@
 }
 .category-chip:hover .category-lock {
   opacity: 1;
+}
+
+.chip-fav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  margin-left: 0.15rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  transition: transform 0.15s;
+  line-height: 1;
+}
+.chip-fav-btn:hover {
+  transform: scale(1.2);
+}
+.chip-fav-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
 }
 
 .category-icon {

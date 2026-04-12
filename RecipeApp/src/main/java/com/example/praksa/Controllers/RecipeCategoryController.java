@@ -63,12 +63,12 @@ public class RecipeCategoryController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping(value="/favourite/add/{categoryId}")
+    @PostMapping(value="/favourite/add")
     @Operation(summary = "Add the recipe category to your favourites ", method = "POST")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> addToFavourites (@PathVariable Long categoryId) throws Exception {
-        favouriteCategoryService.addFavouriteCategory(categoryId);
-        return new ResponseEntity<>("Recipe category %d successfully added to favourites".formatted(categoryId),HttpStatus.CREATED);
+    public ResponseEntity<?> addToFavourites (@RequestParam String categoryName) throws Exception {
+        favouriteCategoryService.addFavouriteCategory(categoryName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping(value = "/favourite/getAll")
@@ -80,11 +80,11 @@ public class RecipeCategoryController {
     }
 
 
-    @DeleteMapping(value = "/favourite/delete/{categoryId}")
-    @Operation(summary = "Delete recipe category withe given id from user's favourites",method = "DELETE")
+    @DeleteMapping(value = "/favourite/delete")
+    @Operation(summary = "Delete recipe category with given name from user's favourites",method = "DELETE")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> deleteFavourite(@PathVariable Long categoryId) throws Exception {
-        favouriteCategoryService.deleteFavouriteCategory(categoryId);
+    public ResponseEntity<?> deleteFavourite(@RequestParam String categoryName) throws Exception {
+        favouriteCategoryService.deleteFavouriteCategory(categoryName);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

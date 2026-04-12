@@ -25,12 +25,10 @@ public class FavouriteCategoryService {
     }
 
     @Transactional
-    public void addFavouriteCategory(Long categoryId) throws Exception {
+    public void addFavouriteCategory(String categoryName) throws Exception {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        RecipeCategory recipeCategory = recipeCategoryRepository.findById(categoryId).orElseThrow(() -> {
-            log.error("Recipe category not found");
-            throw new RuntimeException("Recipe not found");
-        });
+        RecipeCategory recipeCategory = recipeCategoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new Exception("Recipe category not found"));
         if (recipeCategoryRepository.findByCategoryIdAndUserAppId(recipeCategory.getId(),userApp.getId()).isPresent()) {
             log.error("Recipe category already added");
             throw new Exception("Recipe category already added");
@@ -48,12 +46,10 @@ public class FavouriteCategoryService {
        return favoritesList;
     }
 
-    public void deleteFavouriteCategory(Long categoryId) throws Exception {
+    public void deleteFavouriteCategory(String categoryName) throws Exception {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        RecipeCategory recipeCategory = recipeCategoryRepository.findById(categoryId).orElseThrow(() -> {
-            log.error("Recipe category not found");
-            throw new RuntimeException("Recipe not found");
-        });
+        RecipeCategory recipeCategory = recipeCategoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new Exception("Recipe category not found"));
         if (recipeCategoryRepository.findByCategoryIdAndUserAppId(recipeCategory.getId(),userApp.getId()).isEmpty()) {
             log.error("Recipe category not in favourites");
             throw new Exception("Recipe category not in favourites");

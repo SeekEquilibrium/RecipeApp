@@ -1,0 +1,175 @@
+<div class="kitchen-page">
+
+  <!-- Header -->
+  <div class="kitchen-header">
+    <h1 class="kitchen-title">My Kitchen</h1>
+    <p class="kitchen-sub">Your saved recipes and favourite categories</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="kitchen-tabs">
+    <button class="kitchen-tab"
+      [class.active]="activeTab() === 'recipes'"
+      (click)="setTab('recipes')">
+      &#x1F4D6; Favourite Recipes
+    </button>
+    <button class="kitchen-tab"
+      [class.active]="activeTab() === 'categories'"
+      (click)="setTab('categories')">
+      &#x1F3F7;&#xFE0F; Favourite Categories
+    </button>
+  </div>
+
+  <!-- Recipes Tab -->
+  @if (activeTab() === 'recipes') {
+    @if (loadingRecipes()) {
+      <div class="recipes-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="recipe-skeleton">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line skeleton-line--wide"></div>
+              <div class="skeleton-line"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (favouriteRecipes().length === 0) {
+      <div class="kitchen-empty">
+        <span>&#x2764;&#xFE0F;</span>
+        <p>No favourite recipes yet.</p>
+        <p class="kitchen-empty-hint">Browse recipes and press the heart button to save them here.</p>
+      </div>
+    } @else {
+      <div class="recipes-grid">
+        @for (recipe of favouriteRecipes(); track recipe.name) {
+          <div class="recipe-card" (click)="openDetail(recipe)">
+            <div class="recipe-img-wrap">
+              @if (hasImage(recipe)) {
+                <img
+                  [src]="imageUrl(recipe)"
+                  [alt]="recipe.name"
+                  class="recipe-img"
+                  (error)="onImgError($event)" />
+              }
+              <div class="recipe-img-placeholder" [style.display]="hasImage(recipe) ? 'none' : 'flex'">
+                &#x1F37D;&#xFE0F;
+              </div>
+              <button class="fav-btn fav-btn--active"
+                [disabled]="isPendingRecipe(recipe)"
+                (click)="removeRecipe(recipe, $event)"
+                aria-label="Remove from favourites">
+                ❤️
+              </button>
+            </div>
+            <div class="recipe-body">
+              @if (recipe.recipeCategoryName) {
+                <span class="recipe-category">{{ recipe.recipeCategoryName }}</span>
+              }
+              <h3 class="recipe-name">{{ recipe.name }}</h3>
+              @if (recipe.servings) {
+                <span class="recipe-servings">&#x1F37D; {{ recipe.servings }} servings</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- Categories Tab -->
+  @if (activeTab() === 'categories') {
+    @if (loadingCategories()) {
+      <div class="categories-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="category-skeleton"></div>
+        }
+      </div>
+    } @else if (favouriteCategories().length === 0) {
+      <div class="kitchen-empty">
+        <span>&#x1F3F7;&#xFE0F;</span>
+        <p>No favourite categories yet.</p>
+        <p class="kitchen-empty-hint">Visit the home page and press the heart on a category to save it here.</p>
+      </div>
+    } @else {
+      <div class="categories-grid">
+        @for (cat of favouriteCategories(); track cat.name) {
+          <div class="category-card" (click)="goToCategory(cat, $event)">
+            <div class="category-card-body">
+              <span class="category-card-icon">&#x1F37D;&#xFE0F;</span>
+              <div>
+                <h3 class="category-card-name">{{ cat.name }}</h3>
+                @if (cat.description) {
+                  <p class="category-card-desc">{{ cat.description }}</p>
+                }
+              </div>
+            </div>
+            <button class="fav-btn fav-btn--active"
+              [disabled]="isPendingCategory(cat)"
+              (click)="removeCategory(cat, $event)"
+              aria-label="Remove from favourites">
+              ❤️
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+
+</div>
+
+<!-- Detail Modal -->
+@if (selectedRecipe()) {
+  <div class="modal-backdrop" (click)="closeDetail()">
+    <div class="detail-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeDetail()">&#x2715;</button>
+
+      <div class="detail-img-wrap">
+        @if (hasImage(selectedRecipe()!)) {
+          <img
+            [src]="imageUrl(selectedRecipe()!)"
+            [alt]="selectedRecipe()!.name"
+            class="detail-img"
+            (error)="onImgError($event)" />
+        }
+        <div class="detail-img-placeholder" [style.display]="hasImage(selectedRecipe()!) ? 'none' : 'flex'">
+          &#x1F37D;&#xFE0F;
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="detail-meta">
+          @if (selectedRecipe()!.recipeCategoryName) {
+            <span class="recipe-category">{{ selectedRecipe()!.recipeCategoryName }}</span>
+          }
+          @if (selectedRecipe()!.servings) {
+            <span class="recipe-servings">&#x1F37D; {{ selectedRecipe()!.servings }} servings</span>
+          }
+          @if (selectedRecipe()!.createdDateTime) {
+            <span class="recipe-date">{{ selectedRecipe()!.createdDateTime }}</span>
+          }
+        </div>
+
+        <h2 class="detail-title">{{ selectedRecipe()!.name }}</h2>
+
+        @if (selectedRecipe()!.ingredientList && selectedRecipe()!.ingredientList!.length > 0) {
+          <div class="detail-section">
+            <h4>Ingredients</h4>
+            <ul class="ingredient-list">
+              @for (ing of selectedRecipe()!.ingredientList!; track ing.ingredientName) {
+                <li><span class="ing-amount">{{ ing.amount }}</span> {{ ing.ingredientName }}</li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (selectedRecipe()!.preparation) {
+          <div class="detail-section">
+            <h4>Preparation</h4>
+            <p class="preparation-text">{{ selectedRecipe()!.preparation }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

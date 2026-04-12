@@ -13,10 +13,19 @@
   } @else if (categories().length > 0) {
     <div class="categories-grid">
       @for (cat of categories(); track cat.name) {
-        <button class="category-chip" (click)="onCategoryClick(cat.name)">
+        <div class="category-chip" role="button" tabindex="0"
+          (click)="onCategoryClick(cat.name)"
+          (keydown.enter)="onCategoryClick(cat.name)">
           <span class="category-icon">&#x1F37D;&#xFE0F;</span>
           <span class="category-name">{{ cat.name }}</span>
-        </button>
+          <button class="chip-fav-btn"
+            [class.chip-fav-btn--active]="isFavouriteCategory(cat.name)"
+            [disabled]="isPendingCategory(cat.name)"
+            (click)="toggleFavouriteCategory(cat, $event)"
+            [attr.aria-label]="isFavouriteCategory(cat.name) ? 'Remove from favourites' : 'Add to favourites'">
+            {{ isFavouriteCategory(cat.name) ? '❤️' : '🤍' }}
+          </button>
+        </div>
       }
     </div>
   } @else {

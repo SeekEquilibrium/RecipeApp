@@ -4,6 +4,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { RecipesComponent } from './recipes/recipes.component';
 import { AddRecipeComponent } from './recipes/add-recipe/add-recipe.component';
+import { MyKitchenComponent } from './my-kitchen/my-kitchen.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'recipes', component: RecipesComponent },
   { path: 'recipes/add', component: AddRecipeComponent },
+  { path: 'my-kitchen', component: MyKitchenComponent },
   { path: '**', redirectTo: '' }
 ];

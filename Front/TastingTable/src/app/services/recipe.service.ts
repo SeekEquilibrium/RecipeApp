@@ -59,4 +59,16 @@ export class RecipeService {
   removeFavourite(recipeName: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/recipe/favourite/delete`, { params: { recipeName } });
   }
+
+  getFavouriteCategories(): Observable<RecipeCategory[]> {
+    return this.http.get<RecipeCategory[]>(`${this.baseUrl}/category/favourite/getAll`);
+  }
+
+  addFavouriteCategory(categoryName: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/category/favourite/add`, null, { params: { categoryName } });
+  }
+
+  removeFavouriteCategory(categoryName: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/category/favourite/delete`, { params: { categoryName } });
+  }
 }

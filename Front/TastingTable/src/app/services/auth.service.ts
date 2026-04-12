@@ -56,6 +56,16 @@ export class AuthService {
     return this.http.post<{ accessToken: string }>(`${this.base}/register`, dto);
   }
 
+  refreshToken() {
+    return this.http.post(`${this.base}/refresh-token`, {});
+  }
+
+  clearSession(): void {
+    this.currentUser.set(null);
+    this.isLoggedIn.set(false);
+    this.router.navigate(['/login']);
+  }
+
   logout(): void {
     this.http.post(`${this.base}/logout`, {}).pipe(
       catchError(() => of(null))

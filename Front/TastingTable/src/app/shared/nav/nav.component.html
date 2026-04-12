@@ -14,6 +14,9 @@
     <a routerLink="/recipes" class="nav-link">Recipes</a>
     <a href="#features" class="nav-link">Features</a>
     <a href="#categories" class="nav-link">Categories</a>
+    <ng-container *ngIf="auth.isLoggedIn()">
+      <a routerLink="/my-kitchen" class="nav-link">My Kitchen</a>
+    </ng-container>
   </div>
 
   <div class="nav-right">

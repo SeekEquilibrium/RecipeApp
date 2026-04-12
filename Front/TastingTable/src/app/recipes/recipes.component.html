@@ -68,6 +68,15 @@
             <div class="recipe-img-placeholder" [style.display]="hasImage(recipe) ? 'none' : 'flex'">
               &#x1F37D;&#xFE0F;
             </div>
+            @if (auth.isLoggedIn()) {
+              <button class="fav-btn"
+                [class.fav-btn--active]="isFavourite(recipe)"
+                [disabled]="isPending(recipe)"
+                (click)="toggleFavourite(recipe, $event)"
+                aria-label="Toggle favourite">
+                {{ isFavourite(recipe) ? '❤️' : '🤍' }}
+              </button>
+            }
           </div>
 
           <div class="recipe-body">
@@ -91,6 +100,15 @@
   <div class="modal-backdrop" (click)="closeDetail()">
     <div class="detail-modal" (click)="$event.stopPropagation()">
       <button class="modal-close" (click)="closeDetail()">&#x2715;</button>
+      @if (auth.isLoggedIn()) {
+        <button class="fav-btn fav-btn--modal"
+          [class.fav-btn--active]="isFavourite(selectedRecipe()!)"
+          [disabled]="isPending(selectedRecipe()!)"
+          (click)="toggleFavourite(selectedRecipe()!, $event)"
+          aria-label="Toggle favourite">
+          {{ isFavourite(selectedRecipe()!) ? '❤️' : '🤍' }}
+        </button>
+      }
 
       <div class="detail-img-wrap">
         @if (hasImage(selectedRecipe()!)) {

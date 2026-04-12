@@ -29,20 +29,23 @@ public class FavouriteRecipeService {
     }
 
     @Transactional
-    public void addFavouriteRecipe(Long recipeId) throws Exception {
-        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> {
-            log.error("Recipe category not found");
-            throw new RuntimeException("Recipe not found");
-        });
-        if (recipeRepository.findByRecipeIdAndUserAppId(recipe.getId(),userApp.getId()).isPresent()) {
-            log.error("Recipe already added");
-            throw new Exception("Recipe  already added");
+    public void addFavouriteRecipe(String recipeName) throws Exception {
+        UserApp principal = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Recipe recipe = recipeRepository.findByName(recipeName);
+        if (recipe == null) {
+            log.error("Recipe not found");
+            throw new Exception("Recipe not found");
         }
-        Set<Recipe> favRecipes = userAppRepository.getFavRecipes(userApp.getId());
+        if (recipeRepository.findByRecipeIdAndUserAppId(recipe.getId(), principal.getId()).isPresent()) {
+            log.error("Recipe already added");
+            throw new Exception("Recipe already added");
+        }
+        UserApp managedUser = userAppRepository.findById(principal.getId())
+                .orElseThrow(() -> new Exception("User not found"));
+        Set<Recipe> favRecipes = userAppRepository.getFavRecipes(managedUser.getId());
         favRecipes.add(recipe);
-        userApp.setFavouriteRecipes(favRecipes);
-        userAppRepository.save(userApp);
+        managedUser.setFavouriteRecipes(favRecipes);
+        userAppRepository.save(managedUser);
     }
     @Transactional
     public List<RecipeResponseDTO> getFavouritesForUser() {
@@ -52,20 +55,23 @@ public class FavouriteRecipeService {
         return favoritesList.stream().map(converter::recipeToDTO).toList();
     }
 
-    public void deleteFavouriteCategory(Long recipeId) throws Exception {
-        UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> {
-            log.error("Recipe  not found");
-            throw new RuntimeException("Recipe");
-        });
-        if (recipeRepository.findByRecipeIdAndUserAppId(recipe.getId(),userApp.getId()).isEmpty()) {
-            log.error("Recipe  not in favourites");
-            throw new Exception("Recipe  not in favourites");
+    @Transactional
+    public void deleteFavouriteCategory(String recipeName) throws Exception {
+        UserApp principal = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Recipe recipe = recipeRepository.findByName(recipeName);
+        if (recipe == null) {
+            log.error("Recipe not found");
+            throw new Exception("Recipe not found");
         }
-        Set<Recipe> favRecipes = userAppRepository.getFavRecipes(userApp.getId());
+        if (recipeRepository.findByRecipeIdAndUserAppId(recipe.getId(), principal.getId()).isEmpty()) {
+            log.error("Recipe not in favourites");
+            throw new Exception("Recipe not in favourites");
+        }
+        UserApp managedUser = userAppRepository.findById(principal.getId())
+                .orElseThrow(() -> new Exception("User not found"));
+        Set<Recipe> favRecipes = userAppRepository.getFavRecipes(managedUser.getId());
         favRecipes.remove(recipe);
-        userApp.setFavouriteRecipes(favRecipes);
-        userAppRepository.save(userApp);
-
+        managedUser.setFavouriteRecipes(favRecipes);
+        userAppRepository.save(managedUser);
     }
 }

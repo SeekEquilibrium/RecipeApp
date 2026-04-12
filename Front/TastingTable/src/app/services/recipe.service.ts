@@ -47,4 +47,16 @@ export class RecipeService {
   getImage(imageId: number): string {
     return `${this.baseUrl}/image/getImage?imageId=${imageId}`;
   }
+
+  getFavourites(): Observable<RecipeResponse[]> {
+    return this.http.get<RecipeResponse[]>(`${this.baseUrl}/recipe/favourite/getAll`);
+  }
+
+  addFavourite(recipeName: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/recipe/favourite/add`, null, { params: { recipeName } });
+  }
+
+  removeFavourite(recipeName: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/recipe/favourite/delete`, { params: { recipeName } });
+  }
 }

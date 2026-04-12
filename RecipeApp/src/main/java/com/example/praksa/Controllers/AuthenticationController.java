@@ -136,7 +136,10 @@ public class AuthenticationController {
 
     @GetMapping("/current")
     public ResponseEntity<UserDTO> getCurrentUser() {
-        var user = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(principal instanceof UserApp user)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         return ResponseEntity.ok(userDTOConverter.UserToDTO(user));
     }
 }

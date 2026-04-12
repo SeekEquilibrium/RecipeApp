@@ -25,6 +25,9 @@ export class RecipesComponent implements OnInit {
   loading = signal(true);
   selectedRecipe = signal<RecipeResponse | null>(null);
 
+  favouriteNames = signal(new Set<string>());
+  pendingNames = signal(new Set<string>());
+
   filteredRecipes = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.allRecipes().filter(r =>
@@ -37,6 +40,13 @@ export class RecipesComponent implements OnInit {
       next: cats => this.categories.set(cats),
       error: () => {}
     });
+
+    if (this.auth.isLoggedIn()) {
+      this.recipeService.getFavourites().subscribe({
+        next: favs => this.favouriteNames.set(new Set(favs.map(r => r.name))),
+        error: () => {}
+      });
+    }
 
     const category = this.route.snapshot.queryParamMap.get('category');
     if (category) {
@@ -102,5 +112,47 @@ export class RecipesComponent implements OnInit {
 
   addRecipe(): void {
     this.router.navigate(['/recipes/add']);
+  }
+
+  isFavourite(recipe: RecipeResponse): boolean {
+    return this.favouriteNames().has(recipe.name);
+  }
+
+  isPending(recipe: RecipeResponse): boolean {
+    return this.pendingNames().has(recipe.name);
+  }
+
+  toggleFavourite(recipe: RecipeResponse, event: Event): void {
+    event.stopPropagation();
+    if (!this.auth.isLoggedIn() || this.isPending(recipe)) return;
+
+    const name = recipe.name;
+    const wasFav = this.isFavourite(recipe);
+
+    this.pendingNames.update(s => new Set(s).add(name));
+
+    this.favouriteNames.update(s => {
+      const next = new Set(s);
+      wasFav ? next.delete(name) : next.add(name);
+      return next;
+    });
+
+    const call = wasFav
+      ? this.recipeService.removeFavourite(name)
+      : this.recipeService.addFavourite(name);
+
+    call.subscribe({
+      next: () => {
+        this.pendingNames.update(s => { const n = new Set(s); n.delete(name); return n; });
+      },
+      error: () => {
+        this.favouriteNames.update(s => {
+          const next = new Set(s);
+          wasFav ? next.add(name) : next.delete(name);
+          return next;
+        });
+        this.pendingNames.update(s => { const n = new Set(s); n.delete(name); return n; });
+      }
+    });
   }
 }

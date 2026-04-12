@@ -29,9 +29,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        logger.warn("TokenAuthenticationFilter processing: {} {}", request.getMethod(), request.getRequestURI());
         try {
             String jwt = tokenHandler.getJwtFromCookies(request);
-            if (jwt != null && jwt != "" && tokenHandler.validateJwtToken(jwt)) {
+            if (jwt != null && !jwt.isEmpty() && tokenHandler.validateJwtToken(jwt)) {
                 String username = tokenHandler.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -44,9 +45,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.warn("Authentication set for user: {}", username);
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            logger.warn("Cannot set user authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

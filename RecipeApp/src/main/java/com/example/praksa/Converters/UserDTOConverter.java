@@ -47,8 +47,9 @@ public class UserDTOConverter {
                 .build();
     }
 
-    public FriendResponseDTO userToFriendResponseDTO (UserNode userApp){
+    public FriendResponseDTO userToFriendResponseDTO (UserNode userApp, Long id){
         return  FriendResponseDTO.builder()
+                .id(id)
                 .name(userApp.getName())
                 .surname(userApp.getSurname())
                 .email(userApp.getEmail())

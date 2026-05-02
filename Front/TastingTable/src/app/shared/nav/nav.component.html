@@ -16,6 +16,7 @@
     <a href="#categories" class="nav-link">Categories</a>
     <ng-container *ngIf="auth.isLoggedIn()">
       <a routerLink="/my-kitchen" class="nav-link">My Kitchen</a>
+      <a routerLink="/friends" class="nav-link">Friends</a>
     </ng-container>
     <ng-container *ngIf="auth.isAdmin()">
       <a routerLink="/admin" class="nav-link nav-link--admin">Admin</a>

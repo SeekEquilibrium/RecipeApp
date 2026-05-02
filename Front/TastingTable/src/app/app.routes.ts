@@ -6,6 +6,8 @@ import { RecipesComponent } from './recipes/recipes.component';
 import { AddRecipeComponent } from './recipes/add-recipe/add-recipe.component';
 import { MyKitchenComponent } from './my-kitchen/my-kitchen.component';
 import { AdminComponent } from './admin/admin.component';
+import { FriendsComponent } from './friends/friends.component';
+import { ChatComponent } from './chat/chat.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -15,5 +17,7 @@ export const routes: Routes = [
   { path: 'recipes/add', component: AddRecipeComponent },
   { path: 'my-kitchen', component: MyKitchenComponent },
   { path: 'admin', component: AdminComponent },
+  { path: 'friends', component: FriendsComponent },
+  { path: 'chat/:userId', component: ChatComponent },
   { path: '**', redirectTo: '' }
 ];

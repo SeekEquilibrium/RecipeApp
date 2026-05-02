@@ -1,0 +1,134 @@
+<div class="friends-page">
+
+  <!-- Header -->
+  <div class="friends-header">
+    <h1 class="friends-title">Friends</h1>
+    <p class="friends-sub">Manage your friend connections</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="friends-tabs">
+    <button class="friends-tab" [class.active]="activeTab() === 'friends'" (click)="setTab('friends')">
+      &#x1F465; Friends
+      @if (!loadingFriends() && friends().length > 0) {
+        <span class="tab-count">{{ friends().length }}</span>
+      }
+    </button>
+    <button class="friends-tab" [class.active]="activeTab() === 'requests'" (click)="setTab('requests')">
+      &#x1F4E9; Requests
+      @if (!loadingRequests() && requests().length > 0) {
+        <span class="tab-count tab-count--pending">{{ requests().length }}</span>
+      }
+    </button>
+    <button class="friends-tab" [class.active]="activeTab() === 'add'" (click)="setTab('add')">
+      &#x2795; Add Friend
+    </button>
+  </div>
+
+  <!-- ── Friends Tab ────────────────────────────────────────────── -->
+  @if (activeTab() === 'friends') {
+    @if (loadingFriends()) {
+      <div class="friends-grid">
+        @for (n of [1, 2, 3]; track n) {
+        <div class="friend-skeleton"></div>
+        }
+      </div>
+    } @else if (friends().length === 0) {
+      <div class="friends-empty">
+        <span>&#x1F91D;</span>
+        <p>You haven't added any friends yet.</p>
+        <p class="friends-empty-hint">Switch to "Add Friend" to get started.</p>
+      </div>
+    } @else {
+      <div class="friends-grid">
+        @for (friend of friends(); track friend.email) {
+          <div class="friend-card">
+            <div class="friend-avatar">{{ friend.name[0] }}{{ friend.surname[0] }}</div>
+            <div class="friend-info">
+              <p class="friend-name">{{ friend.name }} {{ friend.surname }}</p>
+              <p class="friend-email">{{ friend.email }}</p>
+            </div>
+            <button class="btn-chat" (click)="openChat(friend)">Chat</button>
+            @if (confirmRemoveEmail() === friend.email) {
+              <div class="remove-confirm">
+                <span class="remove-confirm-text">Remove friend?</span>
+                <button class="btn-remove-yes"
+                  [disabled]="removingEmail() === friend.email"
+                  (click)="removeFriend(friend.email)">Yes</button>
+                <button class="btn-remove-no" (click)="cancelRemove()">No</button>
+              </div>
+            } @else {
+              <button class="btn-remove"
+                [disabled]="removingEmail() === friend.email"
+                (click)="confirmRemove(friend.email)">Remove</button>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- ── Requests Tab ───────────────────────────────────────────── -->
+  @if (activeTab() === 'requests') {
+    @if (loadingRequests()) {
+      <p class="loading-text">Loading...</p>
+    } @else if (requests().length === 0) {
+      <div class="friends-empty">
+        <span>&#x1F4EC;</span>
+        <p>No pending friend requests.</p>
+      </div>
+    } @else {
+      <div class="requests-list">
+        @for (req of requests(); track req.email) {
+          <div class="request-row">
+            <div class="friend-avatar friend-avatar--sm">{{ req.name[0] }}{{ req.surname[0] }}</div>
+            <div class="friend-info">
+              <p class="friend-name">{{ req.name }} {{ req.surname }}</p>
+              <p class="friend-email">{{ req.email }}</p>
+            </div>
+            <div class="request-actions">
+              <button class="btn-accept"
+                [disabled]="acceptingEmail() === req.email || decliningEmail() === req.email"
+                (click)="acceptRequest(req.email)">
+                {{ acceptingEmail() === req.email ? '...' : 'Accept' }}
+              </button>
+              <button class="btn-decline"
+                [disabled]="decliningEmail() === req.email || acceptingEmail() === req.email"
+                (click)="declineRequest(req.email)">
+                {{ decliningEmail() === req.email ? '...' : 'Decline' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <!-- ── Add Friend Tab ────────────────────────────────────────── -->
+  @if (activeTab() === 'add') {
+    <div class="add-friend-section">
+      <h2 class="add-friend-heading">Send a Friend Request</h2>
+      <p class="add-friend-sub">Enter the email address of the person you want to add.</p>
+      <div class="add-row">
+        <input
+          class="add-input"
+          type="email"
+          placeholder="friend@example.com"
+          [ngModel]="addEmail()"
+          (ngModelChange)="addEmail.set($event); addStatus.set('idle')"
+          (keydown.enter)="sendRequest()" />
+        <button class="btn-send"
+          [disabled]="!addEmail().trim() || adding()"
+          (click)="sendRequest()">
+          {{ adding() ? 'Sending...' : 'Send Request' }}
+        </button>
+      </div>
+      @if (addStatus() === 'success') {
+        <p class="add-feedback add-feedback--success">&#x2713; Friend request sent!</p>
+      } @else if (addStatus() === 'error') {
+        <p class="add-feedback add-feedback--error">{{ addError() }}</p>
+      }
+    </div>
+  }
+
+</div>

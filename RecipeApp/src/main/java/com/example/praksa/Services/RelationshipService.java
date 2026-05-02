@@ -85,7 +85,10 @@ public class RelationshipService {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<UserNode> requests = relationshipRepository.findSourceUsersWithStatus(userApp.getEmail(), 0);
-        return requests.stream().map(converter::userToFriendResponseDTO).toList();
+        return requests.stream().map(node -> {
+            UserApp ua = userAppRepository.findByEmail(node.getEmail());
+            return converter.userToFriendResponseDTO(node, ua != null ? ua.getId() : null);
+        }).toList();
     }
 
     public List<UserNode> getPendingRequestsSent(String username) {
@@ -121,8 +124,11 @@ public class RelationshipService {
 
     public List<FriendResponseDTO> getFriends() {
         UserApp userApp = (UserApp) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<UserNode> friends =  relationshipRepository.findTargetUsersWithStatus(userApp.getEmail(), 1);
-        return friends.stream().map(converter::userToFriendResponseDTO).toList();
+        List<UserNode> friends = relationshipRepository.findTargetUsersWithStatus(userApp.getEmail(), 1);
+        return friends.stream().map(node -> {
+            UserApp ua = userAppRepository.findByEmail(node.getEmail());
+            return converter.userToFriendResponseDTO(node, ua != null ? ua.getId() : null);
+        }).toList();
     }
 
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface RelationshipRepository extends Neo4jRepository<Relationship,Long> {
 
-    @Query("MATCH (sender:UserNode {email: $senderEmail})-[r:RELATES_TO]->(receiver:UserNode {email: $receiverEmail}) WHERE r.status=1 RETURN r")
+    @Query("MATCH (sender:UserNode {email: $senderEmail})-[r:RELATES_TO]->(receiver:UserNode {email: $receiverEmail}) RETURN r")
     Optional<Relationship> findBySenderAndReceiver(
             @Param("senderEmail") String senderEmail,
             @Param("receiverEmail") String receiverEmail);

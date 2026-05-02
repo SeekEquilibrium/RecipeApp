@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class FriendResponseDTO {
+    private Long id;
     private String name;
     private String surname;
     private String email;

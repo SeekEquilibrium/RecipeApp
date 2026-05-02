@@ -1,0 +1,42 @@
+<div class="chat-page">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <button class="btn-back" (click)="back()">&#x2190;</button>
+    <div class="chat-avatar">{{ friendInitials() }}</div>
+    <span class="chat-friend-name">{{ friendName() }}</span>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" #messageList>
+    @if (loading()) {
+      <div class="chat-loading">Loading messages...</div>
+    } @else if (messages().length === 0) {
+      <div class="chat-empty">No messages yet. Say hello!</div>
+    } @else {
+      @for (msg of messages(); track msg.id) {
+        <div class="msg-row" [class.msg-row--sent]="isSent(msg)">
+          <div class="msg-bubble" [class.msg-bubble--sent]="isSent(msg)">
+            <span class="msg-content">{{ msg.content }}</span>
+            <span class="msg-time">{{ formatTime(msg.time) }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input-bar">
+    <textarea
+      class="chat-input"
+      rows="1"
+      placeholder="Type a message..."
+      [ngModel]="draft()"
+      (ngModelChange)="draft.set($event)"
+      (keydown.enter)="send(); $event.preventDefault()"></textarea>
+    <button class="btn-send-msg" [disabled]="!draft().trim()" (click)="send()">
+      &#x27A4;
+    </button>
+  </div>
+
+</div>

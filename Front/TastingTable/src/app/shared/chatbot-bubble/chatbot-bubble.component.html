@@ -1,0 +1,72 @@
+@if (isLoggedIn()) {
+  <button
+    class="chatbot-fab"
+    (click)="toggle()"
+    [class.chatbot-fab--active]="isOpen()"
+    aria-label="Toggle Recipe Assistant">
+    @if (isOpen()) {
+      <span class="fab-icon">&#x2715;</span>
+    } @else {
+      <span class="fab-icon">&#x1F916;</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <div class="chatbot-panel">
+      <div class="chatbot-header">
+        <div class="chatbot-header-info">
+          <div class="chatbot-avatar">&#x1F916;</div>
+          <div>
+            <div class="chatbot-title">Recipe Assistant</div>
+            <div class="chatbot-subtitle">Powered by AI</div>
+          </div>
+        </div>
+        <button class="chatbot-close" (click)="close()" aria-label="Close">&#x2715;</button>
+      </div>
+
+      <div class="chatbot-messages" #messageArea>
+        @for (msg of messages(); track msg.id) {
+          <div class="msg-row" [class.msg-row--user]="msg.role === 'user'">
+            @if (msg.role === 'bot') {
+              <div class="msg-avatar">&#x1F916;</div>
+            }
+            <div
+              class="msg-bubble"
+              [class.msg-bubble--user]="msg.role === 'user'"
+              [class.msg-bubble--bot]="msg.role === 'bot'">
+              {{ msg.text }}
+            </div>
+          </div>
+        }
+        @if (isLoading()) {
+          <div class="msg-row">
+            <div class="msg-avatar">&#x1F916;</div>
+            <div class="msg-bubble msg-bubble--bot msg-bubble--loading">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="chatbot-input-bar">
+        <textarea
+          class="chatbot-input"
+          rows="1"
+          placeholder="Ask about recipes..."
+          [ngModel]="draft()"
+          (ngModelChange)="draft.set($event)"
+          (keydown)="onKeydown($event)">
+        </textarea>
+        <button
+          class="chatbot-send"
+          [disabled]="!canSend()"
+          (click)="send()"
+          aria-label="Send">
+          &#x27A4;
+        </button>
+      </div>
+    </div>
+  }
+}

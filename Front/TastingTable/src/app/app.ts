@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs';
 import { NavComponent } from './shared/nav/nav.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { ChatbotBubbleComponent } from './shared/chatbot-bubble/chatbot-bubble.component';
 
 const MOBILE_BREAKPOINT = 768;
 const NO_SHELL_ROUTES = ['/login', '/register'];
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, NavComponent, SidebarComponent],
+  imports: [RouterOutlet, CommonModule, NavComponent, SidebarComponent, ChatbotBubbleComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

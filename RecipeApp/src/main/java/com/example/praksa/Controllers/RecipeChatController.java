@@ -17,6 +17,6 @@ public class RecipeChatController {
 
     @PostMapping("/chat")
     public ResponseEntity<String> chat(@RequestBody ChatRequest request) {
-        return ResponseEntity.ok(recipeChatService.chat(request.getMessage()));
+        return ResponseEntity.ok(recipeChatService.chat(request.getMessage(), request.getSessionId()));
     }
 }

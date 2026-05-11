@@ -33,6 +33,7 @@ export class ChatbotBubbleComponent implements OnInit, AfterViewChecked {
   isLoading = signal(false);
   canSend = computed(() => !!this.draft().trim() && !this.isLoading());
 
+  private readonly sessionId = crypto.randomUUID();
   private shouldScroll = false;
   private nextId = 0;
 
@@ -63,7 +64,7 @@ export class ChatbotBubbleComponent implements OnInit, AfterViewChecked {
     this.addUserMessage(text);
     this.draft.set('');
     this.isLoading.set(true);
-    this.chatbot.sendMessage(text).subscribe({
+    this.chatbot.sendMessage(text, this.sessionId).subscribe({
       next: (res) => { this.isLoading.set(false); this.addBotMessage(res); },
       error: () => { this.isLoading.set(false); this.addBotMessage('Sorry, I had trouble connecting. Please try again.'); }
     });

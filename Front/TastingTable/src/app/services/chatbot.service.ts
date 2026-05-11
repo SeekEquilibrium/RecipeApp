@@ -7,10 +7,10 @@ export class ChatbotService {
   private http = inject(HttpClient);
   private readonly base = 'http://localhost:8080';
 
-  sendMessage(message: string): Observable<string> {
+  sendMessage(message: string, sessionId: string): Observable<string> {
     return this.http.post(
       `${this.base}/recipeBot/chat`,
-      { message },
+      { message, sessionId },
       { responseType: 'text' }
     );
   }

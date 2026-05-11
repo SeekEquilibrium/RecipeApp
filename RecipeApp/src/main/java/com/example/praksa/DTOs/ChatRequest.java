@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatRequest {
     private String message;
+    private String sessionId;
 }

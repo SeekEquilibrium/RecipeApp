@@ -33,8 +33,41 @@
             <div
               class="msg-bubble"
               [class.msg-bubble--user]="msg.role === 'user'"
-              [class.msg-bubble--bot]="msg.role === 'bot'">
-              {{ msg.text }}
+              [class.msg-bubble--bot]="msg.role === 'bot'"
+              [class.msg-bubble--recipe]="msg.recipe">
+              @if (msg.recipe) {
+                <div class="recipe-card">
+                  <div class="recipe-card__title">{{ msg.recipe.recipeName }}</div>
+                  <div class="recipe-card__desc">{{ msg.recipe.description }}</div>
+                  @if (msg.recipe.cuisine || msg.recipe.prepTime) {
+                    <div class="recipe-card__meta">
+                      @if (msg.recipe.cuisine) { <span>{{ msg.recipe.cuisine }}</span> }
+                      @if (msg.recipe.diet)    { <span>{{ msg.recipe.diet }}</span> }
+                      @if (msg.recipe.course)  { <span>{{ msg.recipe.course }}</span> }
+                      @if (msg.recipe.prepTime){ <span>Prep {{ msg.recipe.prepTime }}m</span> }
+                      @if (msg.recipe.cookTime){ <span>Cook {{ msg.recipe.cookTime }}m</span> }
+                    </div>
+                  }
+                  @if (msg.recipe.ingredients?.length) {
+                    <div class="recipe-card__section-title">Ingredients</div>
+                    <ul class="recipe-card__list">
+                      @for (ing of msg.recipe.ingredients; track ing.name) {
+                        <li>{{ ing.quantity }} {{ ing.name }}</li>
+                      }
+                    </ul>
+                  }
+                  @if (msg.recipe.steps?.length) {
+                    <div class="recipe-card__section-title">Steps</div>
+                    <ol class="recipe-card__list">
+                      @for (step of msg.recipe.steps; track $index) {
+                        <li>{{ step }}</li>
+                      }
+                    </ol>
+                  }
+                </div>
+              } @else {
+                {{ msg.text }}
+              }
             </div>
           </div>
         }

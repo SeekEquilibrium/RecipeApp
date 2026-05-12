@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,20 +50,25 @@ public class RecipeLoader {
             List<Document> documents = csvToBean.parse().stream()
                     .map(row -> {
                         String content = String.format(
-                                "Recipe: %s\nCuisine: %s\nCourse: %s\nDiet: %s\n" +
+                                "Recipe: %s\nDescription: %s\nCuisine: %s\nCourse: %s\nDiet: %s\n" +
                                 "Prep: %s mins | Cook: %s mins\n" +
                                 "Ingredients: %s\nQuantities: %s\n" +
                                 "Instructions: %s",
-                                row.getName(), row.getCuisine(), row.getCourse(), row.getDiet(),
+                                row.getName(),
+                                row.getDescription() != null ? row.getDescription() : "",
+                                row.getCuisine(), row.getCourse(), row.getDiet(),
                                 row.getPrepTime(), row.getCookTime(),
                                 row.getIngredientsName(), row.getIngredientsQuantity(),
                                 row.getInstructions()
                         );
-                        Map<String, Object> metadata = Map.of(
-                                "name", row.getName() != null ? row.getName() : "",
-                                "cuisine", row.getCuisine() != null ? row.getCuisine() : "",
-                                "imageUrl", row.getImageUrl() != null ? row.getImageUrl() : ""
-                        );
+                        Map<String, Object> metadata = new HashMap<>();
+                        metadata.put("name",     row.getName()     != null ? row.getName()     : "");
+                        metadata.put("cuisine",  row.getCuisine()  != null ? row.getCuisine().toLowerCase().trim()  : "");
+                        metadata.put("course",   row.getCourse()   != null ? row.getCourse().toLowerCase().trim()   : "");
+                        metadata.put("diet",     row.getDiet()     != null ? row.getDiet().toLowerCase().trim()     : "");
+                        metadata.put("prepTime", row.getPrepTime() != null ? row.getPrepTime() : "");
+                        metadata.put("cookTime", row.getCookTime() != null ? row.getCookTime() : "");
+                        metadata.put("imageUrl", row.getImageUrl() != null ? row.getImageUrl() : "");
                         return new Document(content, metadata);
                     })
                     .toList();

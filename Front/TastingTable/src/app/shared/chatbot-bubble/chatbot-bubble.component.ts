@@ -4,12 +4,13 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { ChatbotService } from '../../services/chatbot.service';
+import { ChatbotService, RecipeBotResponse } from '../../services/chatbot.service';
 
 interface ChatMessage {
   id: number;
   role: 'user' | 'bot';
-  text: string;
+  text?: string;
+  recipe?: RecipeBotResponse;
 }
 
 @Component({
@@ -65,7 +66,16 @@ export class ChatbotBubbleComponent implements OnInit, AfterViewChecked {
     this.draft.set('');
     this.isLoading.set(true);
     this.chatbot.sendMessage(text, this.sessionId).subscribe({
-      next: (res) => { this.isLoading.set(false); this.addBotMessage(res); },
+      next: (res) => {
+        this.isLoading.set(false);
+        if (res.error) {
+          this.addBotMessage(res.error);
+        } else if (res.answer) {
+          this.addBotMessage(res.answer);
+        } else {
+          this.addBotRecipe(res);
+        }
+      },
       error: () => { this.isLoading.set(false); this.addBotMessage('Sorry, I had trouble connecting. Please try again.'); }
     });
   }
@@ -84,6 +94,11 @@ export class ChatbotBubbleComponent implements OnInit, AfterViewChecked {
 
   private addBotMessage(text: string): void {
     this.messages.update(msgs => [...msgs, { id: this.nextId++, role: 'bot', text }]);
+    this.shouldScroll = true;
+  }
+
+  private addBotRecipe(recipe: RecipeBotResponse): void {
+    this.messages.update(msgs => [...msgs, { id: this.nextId++, role: 'bot', recipe }]);
     this.shouldScroll = true;
   }
 

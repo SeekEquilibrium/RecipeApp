@@ -1,6 +1,7 @@
 package com.example.praksa.Controllers;
 
 import com.example.praksa.DTOs.ChatRequest;
+import com.example.praksa.DTOs.RecipeBotResponse;
 import com.example.praksa.Services.RecipeChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class RecipeChatController {
     }
 
     @PostMapping("/chat")
-    public ResponseEntity<String> chat(@RequestBody ChatRequest request) {
+    public ResponseEntity<RecipeBotResponse> chat(@RequestBody ChatRequest request) {
         return ResponseEntity.ok(recipeChatService.chat(request.getMessage(), request.getSessionId()));
     }
 }
